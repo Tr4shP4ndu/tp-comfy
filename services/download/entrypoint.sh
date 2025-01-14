@@ -30,6 +30,7 @@ clone_or_pull https://github.com/AIGODLIKE/AIGODLIKE-ComfyUI-Translation.git
 clone_or_pull https://github.com/crystian/ComfyUI-Crystools.git
 clone_or_pull https://github.com/crystian/ComfyUI-Crystools-save.git
 clone_or_pull https://github.com/giriss/comfy-image-saver.git
+clone_or_pull https://github.com/griptape-ai/ComfyUI-Griptape.git
 
 # General
 clone_or_pull https://github.com/bash-j/mikey_nodes.git
