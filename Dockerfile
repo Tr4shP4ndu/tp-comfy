@@ -70,9 +70,9 @@ RUN pip3 install --no-cache-dir \
     torchaudio \
     -f https://download.pytorch.org/whl/cu124
 
-# # Optional: Install Python packages from a requirements file
-# COPY requirements.txt /tmp/requirements.txt
-# RUN pip install --no-cache-dir -r /tmp/requirements.txt
+# Optional: Install Python packages from a requirements file
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 # Set default command to Python
 CMD ["python3"]

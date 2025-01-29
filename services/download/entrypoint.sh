@@ -30,7 +30,7 @@ clone_or_pull https://github.com/AIGODLIKE/AIGODLIKE-ComfyUI-Translation.git
 clone_or_pull https://github.com/crystian/ComfyUI-Crystools.git
 clone_or_pull https://github.com/crystian/ComfyUI-Crystools-save.git
 clone_or_pull https://github.com/giriss/comfy-image-saver.git
-clone_or_pull https://github.com/griptape-ai/ComfyUI-Griptape.git
+# clone_or_pull https://github.com/griptape-ai/ComfyUI-Griptape.git
 
 # General
 clone_or_pull https://github.com/bash-j/mikey_nodes.git
@@ -61,7 +61,7 @@ clone_or_pull https://github.com/florestefano1975/comfyui-portrait-master.git
 clone_or_pull https://github.com/huchenlei/ComfyUI-layerdiffuse.git
 # clone_or_pull https://github.com/Kosinkadink/ComfyUI-Advanced-ControlNet.git
 # clone_or_pull https://github.com/ltdrdata/ComfyUI-Impact-Pack.git
-clone_or_pull https://github.com/ltdrdata/ComfyUI-Inspire-Pack.git
+# clone_or_pull https://github.com/ltdrdata/ComfyUI-Inspire-Pack.git
 clone_or_pull https://github.com/mcmonkeyprojects/sd-dynamic-thresholding.git
 clone_or_pull https://github.com/storyicon/comfyui_segment_anything.git
 clone_or_pull https://github.com/twri/sdxl_prompt_styler.git
@@ -74,7 +74,7 @@ clone_or_pull https://github.com/kijai/ComfyUI-LivePortraitKJ.git
 # Video
 clone_or_pull https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git
 clone_or_pull https://github.com/FizzleDorf/ComfyUI_FizzNodes.git
-clone_or_pull https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved.git
+# clone_or_pull https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved.git
 clone_or_pull https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git
 clone_or_pull https://github.com/melMass/comfy_mtb.git
 clone_or_pull https://github.com/MrForExample/ComfyUI-AnimateAnyone-Evolved.git
