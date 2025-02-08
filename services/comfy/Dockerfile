@@ -1,8 +1,9 @@
 FROM pytorch/pytorch:2.4.1-cuda11.8-cudnn9-runtime
 
-ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1
+# Set non-interactive mode for Debian frontend
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies and Python 3.12
+# Install system dependencies
 RUN apt-get update && \
     apt-get install -y \
     git \
@@ -15,35 +16,54 @@ RUN apt-get update && \
     libmupdf-dev \
     mupdf \
     mupdf-tools \
-    libglib2.0-0 \
     wget \
-    software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get update && \
-    apt-get install -y python3.12 python3.12-distutils python3.12-venv && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    software-properties-common \
+    libssl-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    zlib1g-dev \
+    libffi-dev \
+    xz-utils \
+    liblzma-dev \
+    curl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Update alternatives to make Python 3.12 the default
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1 && \
-    update-alternatives --set python3 /usr/bin/python3.12
+# Install Python 3.12 from source with SSL and LZMA support
+RUN wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz && \
+    tar -xf Python-3.12.0.tgz && \
+    cd Python-3.12.0 && \
+    ./configure --enable-optimizations --with-ensurepip=install \
+        --with-lto --enable-shared \
+        LDFLAGS="-Wl,-rpath=/usr/local/lib" && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && rm -rf Python-3.12.0 Python-3.12.0.tgz
 
-# Install pip for Python 3.12
-RUN wget https://bootstrap.pypa.io/get-pip.py && \
-    python3 get-pip.py && \
-    rm get-pip.py
+# Set Python 3.12 as default
+RUN ln -sf /usr/local/bin/python3.12 /usr/bin/python3 && \
+    ln -sf /usr/local/bin/python3.12 /usr/bin/python
+
+# Upgrade pip and install core dependencies
+RUN python3 -m pip install --upgrade pip setuptools wheel && \
+    python3 -m pip install virtualenv
 
 # Set environment variables
 ENV ROOT=/comfy
 
-# Clone the repository and install Python dependencies
-RUN --mount=type=cache,target=/root/.cache/pip \
-    git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} && \
+# Clone ComfyUI repository
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} && \
     cd ${ROOT} && \
     git checkout master && \
-    git reset --hard 276f8fce9f5a80b500947fb5745a4dde9e84622d && \
-    pip install -r requirements.txt && \
-    pip install \
+    git reset --hard 079eccc92a82b16727f9ff88da613e8b1f078eae
+
+# Install Python dependencies
+COPY python_packages.txt ${ROOT}/
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python3 -m pip install -r ${ROOT}/requirements.txt && \
+    python3 -m pip install -r ${ROOT}/python_packages.txt && \
+    python3 -m pip install \
       gitpython \
       deepdiff \
       piexif \
@@ -52,32 +72,26 @@ RUN --mount=type=cache,target=/root/.cache/pip \
       omegaconf \
       frontend \
       PyOpenGL-accelerate \
-      ffmpeg \
+      ffmpeg-python \
       dlib \
       insightface \
       numba
 
-# Set working directory /comfy
+# Set working directory
 WORKDIR ${ROOT}
 
 # Copy other required files
 COPY . /docker/
 
-# Copy the python_packages.txt file into the container
-COPY python_packages.txt ${ROOT}/
+# Make entrypoint script executable and copy extra model paths
+RUN chmod +x /docker/entrypoint.sh && cp /docker/extra_model_paths.yaml ${ROOT}
 
-# Clone the repository and install Python dependencies from Custom Nodes
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r ${ROOT}/python_packages.txt
+# Set environment variables for application
+ENV NVIDIA_VISIBLE_DEVICES=all PYTHONPATH="${PYTHONPATH}:${PWD}"
 
-RUN chmod u+x /docker/entrypoint.sh && cp /docker/extra_model_paths.yaml ${ROOT}
-
-# Set environment variables for the application
-ENV NVIDIA_VISIBLE_DEVICES=all PYTHONPATH="${PYTHONPATH}:${PWD}" CLI_ARGS=""
-
-# Expose port for the application
+# Expose application port
 EXPOSE 7860
 
 # Define entrypoint and default command
 ENTRYPOINT ["/docker/entrypoint.sh"]
-CMD python -u main.py --listen --port 7860 ${CLI_ARGS}
+CMD ["python3", "-u", "main.py", "--listen", "--port", "7860"]

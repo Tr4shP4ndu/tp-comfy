@@ -1,7 +1,12 @@
-FROM bash:alpine3.20
+FROM debian:bullseye-slim
 
 # Install necessary packages
-RUN apk update && apk add --no-cache git parallel aria2
+RUN apt-get update && apt-get install -y \
+    git \
+    parallel \
+    aria2 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the script and other necessary files
 COPY . /docker

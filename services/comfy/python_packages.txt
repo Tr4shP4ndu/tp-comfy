@@ -1,4 +1,4 @@
-accelerate
+accelerate >= 1.2.1
 addict
 aiohttp
 albumentations
@@ -9,34 +9,31 @@ colour-science
 compel
 cupy-cuda12x
 deepdiff
-diffusers
-diffusers
+diffusers >= 0.31.0
 dlib
 einops
 fairscale
 filelock
 fitz
 ftfy
-ftfy
 fvcore
 git+https://github.com/openai/CLIP.git
 GitPython
 glfw
 glitch_this
-griptape[all]==0.33.1
 huggingface-hub
-imageio
+httpx>=0.23.0,<1
 imageio
 imageio-ffmpeg
 importlib-metadata
 insightface
-insightface
+jax >= 0.4.28
 jaxtyping
+jiter>=0.4.0,<1
 joblib
 kornia
 lark
 librosa
-matplotlib
 matplotlib
 matrix-client==0.4.0
 mediapipe
@@ -52,10 +49,9 @@ onnxruntime
 open-clip-torch
 openai
 opencv-contrib-python-headless
-opencv-python-headless[ffmpeg]<=4.7.0.72
 opencv-python-headless
+opencv-python-headless[ffmpeg]<=4.7.0.72
 packaging
-pandas
 pandas
 piexif
 pilgram
@@ -68,6 +64,7 @@ pygit2
 PyGithub
 pygltflib
 pyhocon
+pykalman
 PyMCubes
 pymeshlab
 PyMuPDF
@@ -92,10 +89,7 @@ rich-argparse
 roma
 safetensors
 scikit-image
-scikit-image
 scikit-learn
-scikit-learn
-scipy
 scipy
 segment-anything
 sentencepiece
@@ -105,23 +99,20 @@ soundfile
 spandrel
 svglib
 timm
-timm
 tokenizers
 torch
 torchdiffeq
 torchmetrics
-torchmetrics
 torchsde
 torchtyping
 tqdm
-transformers
+transformers >= 4.47.0
 transparent-background
 trimesh[easy]
 typer
 typing-extensions
 ultralytics
+webcolors
 xatlas
 yacs
 yapf
-pykalman
-webcolors
