@@ -15,7 +15,7 @@ https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-ms
   out=vae/vae-ft-mse-840000-ema-pruned.safetensors
 https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/vae/diffusion_pytorch_model.safetensors
   out=vae/diffusion_pytorch_model.safetensors
-https://huggingface.co/black-forest-labs/FLUX.1-schnell/blob/main/ae.safetensors
+  https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/ae.safetensors
   out=vae/ae.safetensors
 https://huggingface.co/madebyollin/taesd/resolve/main/taesd_decoder.safetensors
   out=vae_approx/taesd_decoder.safetensors
@@ -32,10 +32,10 @@ https://huggingface.co/Kim2091/AnimeSharp/resolve/main/4x-AnimeSharp.pth
   out=upscale_models/4x-AnimeSharp.pth
 https://huggingface.co/Kim2091/UltraSharp/resolve/main/4x-UltraSharp.pth
   out=upscale_models/4x-UltraSharp.pth
+https://huggingface.co/skbhadra/ClearRealityV1/blob/main/4x-ClearRealityV1.pth
+  out=upscale_models/4x-ClearRealityV1.pth
 https://huggingface.co/gemasai/4x_NMKD-Siax_200k/resolve/main/4x_NMKD-Siax_200k.pth
   out=upscale_models/4x_NMKD-Siax_200k.pth
-https://huggingface.co/uwg/upscaler/resolve/main/ESRGAN/4x_foolhardy_Remacri.pthssssss
-  out=upscale_models/4x_foolhardy_Remacri.pth
 https://huggingface.co/uwg/upscaler/resolve/main/ESRGAN/8x_NMKD-Superscale_150000_G.pth
   out=upscale_models/8x_NMKD-Superscale_150000_G.pth
 https://huggingface.co/camenduru/SUPIR/resolve/main/SUPIR-v0F.ckpt
@@ -105,7 +105,8 @@ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15
   out=controlnet/control_v11p_sd15_softedge.pth
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15s2_lineart_anime.pth
   out=controlnet/control_v11p_sd15s2_lineart_anime.pth
-
+https://huggingface.co/InstantX/FLUX.1-dev-Controlnet-Union/resolve/967982231cc032f743d7867d8eeb7dd44391c35a/diffusion_pytorch_model.safetensors
+  out=controlnet/flux/flux1-dev-controlnet-union.safetensors
 # Control-LoRA
 
 https://huggingface.co/stabilityai/control-lora/resolve/main/control-LoRAs-rank256/control-lora-canny-rank256.safetensors
@@ -117,40 +118,13 @@ https://huggingface.co/stabilityai/control-lora/resolve/main/control-LoRAs-rank2
 https://huggingface.co/stabilityai/control-lora/resolve/main/control-LoRAs-rank256/control-lora-sketch-rank256.safetensors
   out=controlnet/control-lora-sketch-rank256.safetensors
 
-# Animated Diff Evolved
-
-https://huggingface.co/guoyww/animatediff/resolve/cd71ae134a27ec6008b968d6419952b0c0494cf2/animatediff_models/mm_sd_v14.ckpt
-  out=animatediff_models/mm_sd_v14.ckpt
-https://huggingface.co/guoyww/animatediff/resolve/cd71ae134a27ec6008b968d6419952b0c0494cf2/animatediff_models/mm_sd_v15.ckpt
-  out=animatediff_models/mm_sd_v15.ckpt
-https://huggingface.co/guoyww/animatediff/resolve/cd71ae134a27ec6008b968d6419952b0c0494cf2/animatediff_models/mm_sd_v15_v2.ckpt
-  out=animatediff_models/mm_sd_v15_v2.ckpt
-https://huggingface.co/guoyww/animatediff/resolve/cd71ae134a27ec6008b968d6419952b0c0494cf2/v3_sd15_animatediff_models/mm.ckpt
-  out=animatediff_models//mm.ckpt
-https://huggingface.co/manshoety/AD_Stabilized_Motion/resolve/main/animatediff_models/mm-Stabilized_mid.pth
-  out=animatediff_models/mm-Stabilized_mid.pth
-https://huggingface.co/manshoety/AD_Stabilized_Motion/resolve/main/animatediff_models/mm-Stabilized_high.pth
-  out=animatediff_models/mm-Stabilized_high.pth
-https://huggingface.co/CiaraRowles/TemporalDiff/resolve/main/temporaldiff-v1-animatediff.safetensors
-  out=animatediff_models/temporaldiff-v1-animatediff.safetensors
-https://huggingface.co/CiaraRowles/TemporalDiff/resolve/main/temporaldiff-v1-animatediff.ckpt
-  out=animatediff_models/temporaldiff-v1-animatediff.ckpt
-https://huggingface.co/conrevo/AnimateDiff-A1111/resolve/main/motion_module/animatediff_models/mm_sdxl_hs.safetensors
-  out=animatediff_models/mm_sdxl_hs.safetensors
-https://huggingface.co/conrevo/AnimateDiff-A1111/resolve/main/motion_module/animatediff_models/mm_sdxl_v10_beta.safetensors
-  out=animatediff_models/mm_sdxl_v10_beta.safetensors
-https://huggingface.co/conrevo/AnimateDiff-A1111/resolve/main/motion_module/animatediff_models/mm_sd15_v2.safetensors
-  out=animatediff_models/mm_sd15_v2.safetensors
-https://huggingface.co/conrevo/AnimateDiff-A1111/resolve/main/motion_module/animatediff_models/mm_sd15_v3.safetensors
-  out=animatediff_models/mm_sd15_v3.safetensors
 
 # UNET
 
 https://huggingface.co/Comfy-Org/flux1-schnell/resolve/main/flux1-schnell-fp8.safetensors
   out=unet/flux1-schnell-fp8.safetensors
-https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors?download=true
-  out=unet/flux1-dev.safetensors
-
+https://huggingface.co/lllyasviel/flux1_dev/resolve/main/flux1-dev-fp8.safetensors
+  out=unet/flux1-dev-fp8.safetensors
 # SAM2
 
 https://huggingface.co/Kijai/sam2-safetensors/resolve/main/sam2_hiera_base_plus.safetensors
@@ -163,4 +137,7 @@ https://huggingface.co/Kijai/sam2-safetensors/resolve/main/sam2_hiera_tiny.safet
   out=unet/sam2_hiera_tiny.safetensors
 
 
-# Janus-Pro
+# YOLO
+
+https://huggingface.co/Bingsu/adetailer/resolve/main/face_yolov8m.pt
+  out=ultralytics/bbox/face_yolov8m.pt

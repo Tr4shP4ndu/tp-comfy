@@ -10,6 +10,7 @@ compel
 cupy-cuda12x
 deepdiff
 diffusers >= 0.31.0
+dill
 dlib
 einops
 fairscale
@@ -70,6 +71,7 @@ pymeshlab
 PyMuPDF
 pynvml
 PyOpenGL
+pyOpenSSL
 PyPDF2
 pyrsmi
 python-dateutil
@@ -112,6 +114,7 @@ trimesh[easy]
 typer
 typing-extensions
 ultralytics
+watchdog
 webcolors
 xatlas
 yacs

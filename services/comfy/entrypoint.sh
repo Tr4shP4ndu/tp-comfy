@@ -8,6 +8,7 @@ MOUNTS["/root/.cache"]="/data/.cache"
 MOUNTS["${ROOT}/output"]="/data/output/"
 MOUNTS["${ROOT}/input"]="/data/input/"
 MOUNTS["${ROOT}/custom_nodes"]="/data/custom_nodes/"
+MOUNTS["${ROOT}/models/ultralytics"]="/data/models/ultralytics"
 
 for to_path in "${!MOUNTS[@]}"; do
   from_path="${MOUNTS[${to_path}]}"

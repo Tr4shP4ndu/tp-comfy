@@ -2,11 +2,12 @@ comfy:
   base_path: /data
   custom_nodes: custom_nodes
   input: input
-  workspaces: workspaces
+  workflows: workflows
   checkpoints: models/checkpoints
   clip: models/clip
   clip_vision: models/clip_vision
   configs: models/configs
+  controlnet: models/controlnet
   diffusers: models/diffusers
   diffusion_models: models/diffusion_models
   embeddings: embeddings
@@ -18,3 +19,5 @@ comfy:
   style_models: models/style_models
   unet: models/unet
   upscale_models: models/upscale_models
+  ultralytics: models/ultralytics
+    #- models/ultralytics/bbox

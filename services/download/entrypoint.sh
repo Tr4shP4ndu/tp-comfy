@@ -3,7 +3,7 @@
 set -Eeuo pipefail
 
 # Create necessary directories
-mkdir -vp /data/{config,workspaces,input,custom_nodes,output,models/{checkpoints,clip,clip_vision,configs,diffusers,diffusion_models,embeddings,gligen,hypernetworks,loras,photomaker,style_models,unet,upscale_models,vae,vae_approx,sam2,animatediff_models,animatediff_motion_lora,mmdets,onnx,liveportrait}}
+mkdir -vp /data/{config,workflows,input,custom_nodes,output,models/{checkpoints,clip,clip_vision,configs,diffusers,diffusion_models,embeddings,gligen,hypernetworks,loras,photomaker,style_models,unet,upscale_models,vae,vae_approx,sam2,mmdets,onnx,liveportrait,ultralytics}}
 
 function clone_or_pull () {
     if [[ $1 =~ ^(.*[/:])(.*)(\.git)$ ]] || [[ $1 =~ ^(http.*\/)(.*)$ ]]; then
@@ -28,6 +28,7 @@ repos=(
     "https://github.com/ltdrdata/ComfyUI-Manager.git"
     "https://github.com/GHOSTLXH/ComfyUI-Counternodes.git"
     "https://github.com/yuvraj108c/ComfyUI_InvSR.git"
+    "https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git"
     "https://github.com/risunobushi/ComfyUI_DisplacementMapTools.git"
     "https://github.com/twri/sdxl_prompt_styler.git"
     "https://github.com/AInseven/ComfyUI-fastblend.git"
@@ -46,6 +47,19 @@ repos=(
     "https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes.git"
     "https://github.com/daxcay/ComfyUI-JDCN.git"
     "https://github.com/aria1th/ComfyUI-LogicUtils.git"
+    "https://github.com/shadowcz007/comfyui-mixlab-nodes.git"
+    "https://github.com/TTPlanetPig/Comfyui_TTP_Toolset.git"
+    "https://github.com/chrisgoringe/cg-image-picker.git"
+    "https://github.com/lldacing/ComfyUI_PuLID_Flux_ll.git"
+    "https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git"
+    "https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait.git"
+    "https://github.com/theUpsider/ComfyUI-Logic.git"
+    "https://github.com/sipie800/ComfyUI-PuLID-Flux-Enhanced.git"
+    "https://github.com/rgthree/rgthree-comfy.git"
+    "https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git"
+    "https://github.com/ltdrdata/ComfyUI-Impact-Pack.git"
+    "https://github.com/yolain/ComfyUI-Easy-Use.git"
+    "https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git"
     "https://github.com/kijai/ComfyUI-depth-fm.git"
     "https://github.com/kijai/ComfyUI-Geowizard.git"
     "https://github.com/kijai/ComfyUI-Marigold.git"
