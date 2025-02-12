@@ -1,0 +1,4 @@
+https://huggingface.co/SG161222/RealVisXL_V4.0/resolve/main/RealVisXL_V4.0.safetensors?download=true
+  out=checkpoints/RealVisXL_V4.0.safetensors
+https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors
+  out=checkpoints/sd_xl_turbo_1.0_fp16.safetensors
