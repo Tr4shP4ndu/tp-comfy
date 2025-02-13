@@ -26,6 +26,9 @@ echo "########################################"
 # Add your repositories here
 repos=(
     "https://github.com/ltdrdata/ComfyUI-Manager.git"
+    "https://github.com/chrisgoringe/cg-image-filter.git"
+    "https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git"
+    
 )
 
 for repo in "${repos[@]}"; do

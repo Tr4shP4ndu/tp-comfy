@@ -2,3 +2,14 @@ https://huggingface.co/SG161222/RealVisXL_V4.0/resolve/main/RealVisXL_V4.0.safet
   out=checkpoints/RealVisXL_V4.0.safetensors
 https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors
   out=checkpoints/sd_xl_turbo_1.0_fp16.safetensors
+
+ # Upscaling
+
+https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x2.pth?download=true
+  out=upscale_models/RealESRGAN_x2.pth
+https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x4.pth?download=true
+  out=upscale_models/RealESRGAN_x4.pth
+https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x8.pth?download=true
+  out=upscale_models/RealESRGAN_x8.pth
+https://huggingface.co/Kim2091/UltraSharp/resolve/main/4x-UltraSharp.pth?download=true
+  out=upscale_models/4x-UltraSharp.pth
