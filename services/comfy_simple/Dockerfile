@@ -1,7 +1,9 @@
-FROM pytorch/pytorch:2.4.1-cuda11.8-cudnn9-runtime
+FROM pytorch/pytorch:2.6.0-cuda12.6-cudnn9-devel
+
 
 # Set non-interactive mode for Debian frontend
 ENV DEBIAN_FRONTEND=noninteractive
+ENV CUDA_HOME=/usr/local/cuda
 
 # Install system dependencies
 RUN apt-get update && \
@@ -29,20 +31,20 @@ RUN apt-get update && \
     curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Python 3.12 from source with SSL and LZMA support
-RUN wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz && \
-    tar -xf Python-3.12.0.tgz && \
-    cd Python-3.12.0 && \
-    ./configure --enable-optimizations --with-ensurepip=install \
-        --with-lto --enable-shared \
-        LDFLAGS="-Wl,-rpath=/usr/local/lib" && \
-    make -j$(nproc) && \
-    make install && \
-    cd .. && rm -rf Python-3.12.0 Python-3.12.0.tgz
+# # Install Python 3.12 from source with SSL and LZMA support
+# RUN wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz && \
+#     tar -xf Python-3.12.0.tgz && \
+#     cd Python-3.12.0 && \
+#     ./configure --enable-optimizations --with-ensurepip=install \
+#         --with-lto --enable-shared \
+#         LDFLAGS="-Wl,-rpath=/usr/local/lib" && \
+#     make -j$(nproc) && \
+#     make install && \
+#     cd .. && rm -rf Python-3.12.0 Python-3.12.0.tgz
 
-# Set Python 3.12 as default
-RUN ln -sf /usr/local/bin/python3.12 /usr/bin/python3 && \
-    ln -sf /usr/local/bin/python3.12 /usr/bin/python
+# # Set Python 3.12 as default
+# RUN ln -sf /usr/local/bin/python3.12 /usr/bin/python3 && \
+#     ln -sf /usr/local/bin/python3.12 /usr/bin/python
 
 # Upgrade pip and install core dependencies
 RUN python3 -m pip install --upgrade pip setuptools wheel && \
@@ -50,6 +52,9 @@ RUN python3 -m pip install --upgrade pip setuptools wheel && \
 
 # Set environment variables
 ENV ROOT=/comfy
+ENV CUDA_HOME=/usr/local/cuda
+ENV PATH=$CUDA_HOME/bin:$PATH
+ENV LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
 
 # Clone ComfyUI repository
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} && \

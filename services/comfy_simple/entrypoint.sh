@@ -22,4 +22,14 @@ for to_path in "${!MOUNTS[@]}"; do
   echo Mounted $(basename "${from_path}")
 done
 
+# Install dependencies from each custom_nodes folder
+# for dir in /data_simple/custom_nodes/*; do
+#     if [ -d "$dir" ]; then
+#         if [ -f "$dir/requirements.txt" ]; then
+#             echo "Installing dependencies for $dir"
+#             python3 -m pip install -r "$dir/requirements.txt"
+#         fi
+#     fi
+# done
+
 exec "$@"

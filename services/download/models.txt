@@ -141,3 +141,60 @@ https://huggingface.co/Kijai/sam2-safetensors/resolve/main/sam2_hiera_tiny.safet
 
 https://huggingface.co/Bingsu/adetailer/resolve/main/face_yolov8m.pt
   out=ultralytics/bbox/face_yolov8m.pt
+
+
+  #CheckPoints
+
+https://huggingface.co/SG161222/RealVisXL_V4.0/resolve/main/RealVisXL_V4.0.safetensors?download=true
+out=checkpoints/RealVisXL_V4.0.safetensors
+https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors
+out=checkpoints/sd_xl_turbo_1.0_fp16.safetensors
+https://civitai.com/api/download/models/1199750?type=Model&format=SafeTensor&size=pruned&fp=fp16
+out=checkpoints/perfectponyxl_v50.safetensors
+https://civitai.green/api/download/models/441591?type=Model&format=SafeTensor&size=pruned&fp=fp16
+out=checkpoints/arthemyComics_v70.safetensors
+https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors
+out=checkpoints/clip_l.safetensors
+https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors?download=true
+out=checkpoints/t5xxl_fp16.safetensors
+https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev/resolve/main/flux1-depth-dev.safetensors?download=true
+out=checkpoints/flux1-depth-dev.safetensors
+
+#VAE
+
+https://civitai.green/api/download/models/739267?type=Model&format=SafeTensor
+out=vae/ponyEnhancedVAE_pastelHelperV1.safetensors
+https://civitai.green/api/download/models/83798?type=Model&format=SafeTensor
+out=vae/color101VAE_v1.safetensors
+
+# Upscaling
+
+https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x2.pth?download=true
+out=upscale_models/RealESRGAN_x2.pth
+https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x4.pth?download=true
+out=upscale_models/RealESRGAN_x4.pth
+https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x8.pth?download=true
+out=upscale_models/RealESRGAN_x8.pth
+https://huggingface.co/Kim2091/UltraSharp/resolve/main/4x-UltraSharp.pth?download=true
+out=upscale_models/4x-UltraSharp.pth
+
+# Control Net
+
+https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model.safetensors?download=true
+out=controlnet/diffusion_pytorch_model.safetensors
+https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors?download=true
+out=controlnet/diffusion_pytorch_model_promax.safetensors
+
+#Loras
+
+https://civitai.green/api/download/models/152309?type=Model&format=SafeTensor
+out=loras/xl_more_art-full_v1.safetensors
+https://civitai.green/api/download/models/221966?type=Model&format=SafeTensor
+out=loras/EpicCanvas-Genesis-V1.safetensors
+
+# YOLO
+
+https://huggingface.co/Bingsu/adetailer/resolve/main/face_yolov8m.pt
+out=ultralytics/bbox/face_yolov8m.pt
+https://huggingface.co/Bingsu/adetailer/resolve/main/person_yolov8m-seg.pt?download=true
+out=ultralytics/segm/person_yolov8m-seg.pt

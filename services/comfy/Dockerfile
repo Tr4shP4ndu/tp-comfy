@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.4.1-cuda11.8-cudnn9-runtime
+FROM pytorch/pytorch:2.6.0-cuda12.6-cudnn9-devel
 
 # Set non-interactive mode for Debian frontend
 ENV DEBIAN_FRONTEND=noninteractive
