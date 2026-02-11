@@ -1,211 +1,246 @@
-# ComfyUI Docker Setup
+# ComfyUI Workspace
 
-This project provides a quick and easy setup for running [ComfyUI](https://github.com/comfyanonymous/ComfyUI) in a Docker environment. It uses two Docker images:
+A modern ComfyUI setup using **UV** for fast Python package management and **Make** for automation. Includes pre-configured models, custom nodes, and workflows for AI image generation.
 
-- **bash:alpine3.20** – for downloading models and custom nodes.
-- **pytorch/pytorch:2.4.1-cuda11.8-cudnn9-runtime** – for setting up and running ComfyUI with all necessary dependencies.
+## Features
 
-## Getting Started
+- **Fast setup** with UV (10-100x faster than pip)
+- **60+ custom nodes** pre-configured
+- **Curated model collection** (checkpoints, VAEs, ControlNet, upscalers, etc.)
+- **Simple commands** via Makefile
+- **GPU support** with multiple VRAM modes
 
-### Prerequisites
+## Prerequisites
 
-- Ensure you have Docker and Docker Compose installed on your machine.
+- **Python 3.12+** (3.13 recommended) 
+- **NVIDIA GPU** with CUDA support (optional, CPU mode available)
+- **aria2** for fast model downloads
 
-### Starting the Docker Containers
+### Install Prerequisites
 
-1. **Download models and custom nodes:**
+```bash
+# macOS
+brew install aria2
 
-    ```bash
-    docker compose --profile download up --build
-    ```
+# Ubuntu/Debian
+sudo apt install aria2
 
-    This command creates the necessary folders and downloads models and custom nodes.
+# Fedora
+sudo dnf install aria2
+```
 
-2. **Set up and start ComfyUI:**
+UV will be automatically installed when you run `make setup`.
 
-    ```bash
-    docker compose --profile comfy up --build
-    ```
+## Quick Start
 
-    This step clones the ComfyUI repository, installs the dependencies, and starts ComfyUI.
+```bash
+# 1. Initial setup (creates venv, clones ComfyUI, installs deps)
+make setup
 
-3. **Subsequent runs (after initial build):**
+# 2. Download custom nodes
+make download-nodes
 
-    ```bash
-    docker compose --profile comfy up
-    ```
+# 3. Download AI models (this takes a while, ~50GB+)
+make download-models
 
-    This command starts the already built ComfyUI environment.
+# 4. Start ComfyUI
+make run
+```
 
-## Accessing the Application
+Then open http://localhost:7860 in your browser.
 
-Once the containers are up and running, you can access ComfyUI in your browser at:
+## Available Commands
 
-[http://localhost:7860](http://localhost:7860)
+Run `make help` to see all available commands:
 
----
+| Command | Description |
+|---------|-------------|
+| `make setup` | Initial setup: venv, ComfyUI, dependencies |
+| `make install` | Install/reinstall Python dependencies |
+| `make install-cuda` | Install with CUDA support (cupy) |
+| `make download-nodes` | Download/update custom nodes |
+| `make download-models` | Download AI models |
+| `make download-all` | Download everything (nodes + models) |
+| `make add-model` | Add a new model to download list (interactive) |
+| `make add-node` | Add a new custom node (interactive) |
+| `make list-models` | List all models in config |
+| `make list-nodes` | List all custom nodes in config |
+| `make run` | Start ComfyUI (GPU) |
+| `make run-cpu` | Start ComfyUI (CPU only) |
+| `make run-lowvram` | Start with low VRAM mode |
+| `make run-highvram` | Start with high VRAM mode (faster) |
+| `make update` | Update ComfyUI and custom nodes |
+| `make update-nodes` | Update only custom nodes |
+| `make install-node-deps` | Install custom node dependencies |
+| `make clean` | Clean cache files |
+| `make reset` | Full reset (keeps data) |
+| `make info` | Show environment info |
+| `make gpu-info` | Show GPU information |
 
-## Provided Models
+## Directory Structure
 
-This Docker setup comes with several pre-configured models, with more potentially added in the future based on needs.
+```
+.
+├── Makefile                    # Build automation
+├── README.MD                   # This file
+├── pyproject.toml              # Python dependencies
+├── extra_model_paths.yaml      # ComfyUI model paths config
+├── setup/                      # Scripts and config files
+│   ├── models.txt              # Model download list
+│   ├── nodes.txt               # Custom nodes list
+│   ├── add_model.sh            # Script to add models
+│   ├── add_node.sh             # Script to add nodes
+│   └── download_nodes.sh       # Script to download nodes
+├── comfy/                      # ComfyUI installation (created by setup)
+└── data/                       # All persistent data (created by setup)
+    ├── custom_nodes/           # Custom node installations
+    ├── input/                  # Input images
+    ├── output/                 # Generated images
+    ├── workflows/              # Saved workflows
+    └── models/                 # AI models
+        ├── checkpoints/        # Main SD models
+        ├── loras/              # LoRA models
+        ├── vae/                # VAE models
+        ├── controlnet/         # ControlNet models
+        ├── upscale_models/     # Upscaling models
+        └── ...                 # Other model folders
+```
+
+## Included Models
 
 ### Checkpoints
+- Stable Diffusion 1.5
+- DreamShaper 8
+- SDXL Turbo
+- Playground v2.5
+- RealVisXL V4.0
+- FLUX.1 Depth-dev
 
-- **Playground v2.5 1024px Aesthetic**
-- **SDXL Turbo 1.0**
-- **V1.5 Pruned EMA-only**
-- **DreamShaper 8**
+### Upscalers
+- RealESRGAN (2x, 4x, 8x)
+- AnimeSharp 4x
+- UltraSharp 4x
+- SUPIR
 
-### VAE
+### ControlNet
+- Full SD 1.5 v1.1 collection (depth, canny, openpose, etc.)
+- SDXL ControlNet Union
+- FLUX ControlNet Union
+- Control-LoRA variants
 
-- **VAE ft MSE 840000 EMA Pruned**
-- **FLUX.1 Schnell Diffusion**
-- **FLUX.1 Schnell AE**
-- **TaeSD Decoder**
-- **TaeSDXL Decoder**
-
-### Upscale
-
-- **RealESRGAN x4plus**
-- **RealESRGAN x4plus Anime 6B**
-- **4x AnimeSharp**
-- **4x UltraSharp**
-- **4x NMKD Siax 200k**
-- **4x Foolhardy Remacri**
-- **8x NMKD Superscale 150000 G**
-- **SUPIR-v0F**
-- **SUPIR-v0Q**
-- **1x DeJPG OmniSR (Two versions)**
-
-### Embeddings
-
-- **EasyNegative**
-- **DeepNegative V1 75T**
-
-### CLIP
-
-- **CLIP-L**
-- **T5XXL fp16**
-- **T5XXL fp8 e4m3fn**
-- **CLIP Vision**
-- **CLIP ViT Large Patch14**
-- **Control-LoRA CLIP Vision G**
-
-### unCLIP
-
-- **Stable Diffusion 2.1 UnCLIP Small**
-- **ControlNet v1.1**
-- **ControlNet v11f1p SD15 Depth**
-- **ControlNet v11p SD15 Canny**
-- **ControlNet v11p SD15 OpenPose**
-- **ControlNet v11e SD15 IP2P**
-- **ControlNet v11e SD15 Shuffle**
-- **ControlNet v11f1e SD15 Tile**
-- **ControlNet v11p SD15 Inpaint**
-- **ControlNet v11p SD15 LineArt**
-- **ControlNet v11p SD15 MLSd**
-- **ControlNet v11p SD15 NormalBae**
-- **ControlNet v11p SD15 Scribble**
-- **ControlNet v11p SD15 Seg**
-- **ControlNet v11p SD15 SoftEdge**
-- **ControlNet v11p SD15S2 LineArt Anime**
-- **Control-LoRA**
-- **Control-LoRA Canny Rank256**
-- **Control-LoRA Depth Rank256**
-- **Control-LoRA Recolor Rank256**
-- **Control-LoRA Sketch Rank256**
-
-### Animated Diff Evolved
-
-- **mm SD v14**
-- **mm SD v15**
-- **mm SD v15 v2**
-- **mm SD15 Animatediff Models v3**
-- **mm-Stabilized Mid**
-- **mm-Stabilized High**
-- **TemporalDiff v1 Animatediff**
-- **TemporalDiff v1 CKPT**
-- **mm SDXL HS**
-- **mm SDXL v10 Beta**
-- **mm SD15 v2**
-- **mm SD15 v3**
-
-### UNET
-
-- **FLUX1 Schnell FP8**
-- **FLUX1 Dev**
-
----
+### Other
+- VAE models (SD, SDXL, FLUX)
+- CLIP text encoders
+- SAM2 segmentation models
+- YOLO face/person detection
+- LoRAs and embeddings
 
 ## Custom Nodes
 
-This setup also includes several custom nodes, some of which may have workarounds to ensure proper functioning.
+60+ custom nodes are included for:
+- **Workflow Management**: ComfyUI Manager, Impact Pack
+- **Image Processing**: Upscaling, face detection, segmentation
+- **ControlNet**: Depth, pose, canny preprocessing
+- **Video**: Frame interpolation, video export
+- **Utilities**: Logic nodes, prompt styling, image saving
 
-### ComfyUI Manager
+See `setup/nodes.txt` for the full list.
 
-- **ComfyUI-Manager**
-- **comfyui-workspace-manager**
-- **AIGODLIKE-ComfyUI-Translation**
-- **ComfyUI-Crystools**
-- **ComfyUI-Crystools-save**
-- **comfy-image-saver**
+## Adding Custom Models
 
-### General Nodes
+### Interactive (Recommended)
+```bash
+make add-model
+```
 
-- **mikey_nodes**
-- **cg-use-everywhere**
-- **ComfyUI_essentials**
-- **efficiency-nodes-comfyui**
-- **ComfyUI-KJNodes**
-- **ComfyUI-Custom-Scripts**
-- **rgthree-comfy** *(Currently not working/disabled)*
-- **ComfyUI_smZNodes** *(Currently not working/disabled)*
-- **ComfyUI-Gtsuya-Nodes**
-- **ComfyUI-JDCN**
-- **ComfyUI_Fill-Nodes**
-- **ComfyUI-LogicUtils**
-- **ComfyUI-depth-fm**
-- **ComfyUI-Geowizard**
-- **ComfyUI-Marigold**
-- **comfy_PoP**
-- **Derfuu_ComfyUI_ModdedNodes**
-- **ComfyUI Art-Venture**
+This will prompt you for:
+1. **Model URL** - Direct download link
+2. **Target folder** - Where to save (checkpoints, loras, vae, etc.)
+3. **New filename** - Optional, leave empty to keep original name
 
-### Control Nodes
+### Manual
+Edit `setup/models.txt` directly:
 
-- **ComfyUI_InstantID**
-- **ComfyUI_IPAdapter_plus**
-- **comfyui_controlnet_aux**
-- **comfyui-portrait-master**
-- **comfyui-reactor-node**
-- **ComfyUI-layerdiffuse**
-- **ComfyUI-Advanced-ControlNet**
-- **ComfyUI-Impact-Pack**
-- **ComfyUI-Inspire-Pack**
-- **sd-dynamic-thresholding**
-- **comfyui_segment_anything**
-- **sdxl_prompt_styler**
-- **ComfyUI-Universal-Styler**
+```
+https://example.com/model.safetensors
+  out=checkpoints/my_model.safetensors
+```
 
-### Video Nodes
+Then run `make download-models`.
 
-- **ComfyUI-Frame-Interpolation**
-- **ComfyUI_FizzNodes**
-- **ComfyUI-AnimateDiff-Evolved**
-- **ComfyUI-VideoHelperSuite**
-- **comfy_mtb**
-- **ComfyUI-AnimateAnyone-Evolved**
+### Via Script
+```bash
+# Keep original filename
+./setup/add_model.sh "https://example.com/model.safetensors" checkpoints
 
-### Additional Nodes
+# With custom filename
+./setup/add_model.sh "https://example.com/model.safetensors" loras "my_lora.safetensors"
+```
 
-- **ComfyUI_FaceAnalysis**
-- **ComfyUI-WD14-Tagger**
-- **ComfyUI-Image-Selector**
+## Adding Custom Nodes
 
-### WAS Node Suite
+### Interactive (Recommended)
+```bash
+make add-node
+```
 
-- **was-node-suite-comfyui**
+This will prompt you for the GitHub repository URL.
 
----
+### Manual
+Edit `setup/nodes.txt` and add the GitHub URL:
 
-Feel free to contribute by submitting issues or pull requests to improve the setup or add new features.
+```
+https://github.com/username/ComfyUI-NodeName.git
+```
+
+Then run `make download-nodes`.
+
+### Via Script
+```bash
+./setup/add_node.sh "https://github.com/username/ComfyUI-NodeName"
+```
+
+## Troubleshooting
+
+### CUDA Not Available
+```bash
+# Check GPU status
+make gpu-info
+
+# Run in CPU mode
+make run-cpu
+```
+
+### Out of VRAM
+```bash
+# Use low VRAM mode
+make run-lowvram
+```
+
+### Custom Node Errors
+```bash
+# Install missing dependencies for custom nodes
+make install-node-deps
+```
+
+### Reset Everything
+```bash
+# Full reset (keeps models and outputs)
+make reset
+make setup
+```
+
+## Migration from Docker
+
+If you previously used the Docker setup:
+
+1. Your models in `data/models/` are compatible - no re-download needed
+2. Copy any custom nodes from `data/custom_nodes/` 
+3. Copy your outputs from `data/output/`
+4. Run `make setup` to create the new environment
+
+## License
+
+This project provides configuration and automation for ComfyUI. See the respective licenses for:
+- [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
+- Individual models and custom nodes

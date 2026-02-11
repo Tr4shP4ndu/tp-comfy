@@ -1,200 +1,239 @@
-# Checkpoints
+# ComfyUI Models Download List
+# Format: aria2c input file
+# Usage: aria2c -x 10 --input-file models.txt --dir data/models --continue
 
-https://huggingface.co/playgroundai/playground-v2.5-1024px-aesthetic/resolve/main/playground-v2.5-1024px-aesthetic.fp16.safetensors
-  out=checkpoints/playground-v2.5-1024px-aesthetic.fp16.safetensors
-https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors
-  out=checkpoints/sd_xl_turbo_1.0_fp16.safetensors
+# ============================================================================
+# CHECKPOINTS
+# ============================================================================
+
+# Stable Diffusion 1.5
 https://huggingface.co/LarryAIDraw/v1-5-pruned-emaonly/resolve/main/v1-5-pruned-emaonly.ckpt
   out=checkpoints/v1-5-pruned-emaonly.ckpt
+
+# DreamShaper
 https://huggingface.co/autismanon/modeldump/resolve/main/dreamshaper_8.safetensors
   out=checkpoints/dreamshaper_8.safetensors
 
+# SDXL Turbo
+https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors
+  out=checkpoints/sd_xl_turbo_1.0_fp16.safetensors
+
+# Playground v2.5
+https://huggingface.co/playgroundai/playground-v2.5-1024px-aesthetic/resolve/main/playground-v2.5-1024px-aesthetic.fp16.safetensors
+  out=checkpoints/playground-v2.5-1024px-aesthetic.fp16.safetensors
+
+# RealVisXL V4.0
+https://huggingface.co/SG161222/RealVisXL_V4.0/resolve/main/RealVisXL_V4.0.safetensors
+  out=checkpoints/RealVisXL_V4.0.safetensors
+
+# FLUX.1 Depth-dev
+https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev/resolve/main/flux1-depth-dev.safetensors
+  out=checkpoints/flux1-depth-dev.safetensors
+
+# unCLIP
+https://huggingface.co/stabilityai/stable-diffusion-2-1-unclip-small/resolve/main/image_encoder/model.safetensors
+  out=checkpoints/stable-diffusion-2-1-unclip-small.safetensors
+
+# ============================================================================
 # VAE
+# ============================================================================
 
 https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-mse-840000-ema-pruned.safetensors
   out=vae/vae-ft-mse-840000-ema-pruned.safetensors
+
 https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/vae/diffusion_pytorch_model.safetensors
   out=vae/diffusion_pytorch_model.safetensors
-  https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/ae.safetensors
+
+https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/ae.safetensors
   out=vae/ae.safetensors
+
+# VAE Approx (for previews)
 https://huggingface.co/madebyollin/taesd/resolve/main/taesd_decoder.safetensors
   out=vae_approx/taesd_decoder.safetensors
+
 https://huggingface.co/madebyollin/taesdxl/resolve/main/taesdxl_decoder.safetensors
   out=vae_approx/taesdxl_decoder.safetensors
 
-# Upscale
+# ============================================================================
+# UPSCALE MODELS
+# ============================================================================
 
 https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth
   out=upscale_models/RealESRGAN_x4plus.pth
+
 https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth
   out=upscale_models/RealESRGAN_x4plus_anime_6B.pth
+
+https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x2.pth
+  out=upscale_models/RealESRGAN_x2.pth
+
+https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x4.pth
+  out=upscale_models/RealESRGAN_x4.pth
+
+https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x8.pth
+  out=upscale_models/RealESRGAN_x8.pth
+
 https://huggingface.co/Kim2091/AnimeSharp/resolve/main/4x-AnimeSharp.pth
   out=upscale_models/4x-AnimeSharp.pth
+
 https://huggingface.co/Kim2091/UltraSharp/resolve/main/4x-UltraSharp.pth
   out=upscale_models/4x-UltraSharp.pth
-https://huggingface.co/skbhadra/ClearRealityV1/blob/main/4x-ClearRealityV1.pth
-  out=upscale_models/4x-ClearRealityV1.pth
+
 https://huggingface.co/gemasai/4x_NMKD-Siax_200k/resolve/main/4x_NMKD-Siax_200k.pth
   out=upscale_models/4x_NMKD-Siax_200k.pth
+
 https://huggingface.co/uwg/upscaler/resolve/main/ESRGAN/8x_NMKD-Superscale_150000_G.pth
   out=upscale_models/8x_NMKD-Superscale_150000_G.pth
+
 https://huggingface.co/camenduru/SUPIR/resolve/main/SUPIR-v0F.ckpt
   out=upscale_models/SUPIR-v0F.ckpt
+
 https://huggingface.co/camenduru/SUPIR/resolve/main/SUPIR-v0Q.ckpt
   out=upscale_models/SUPIR-v0Q.ckpt
-https://drive.google.com/uc?export=download&confirm=1&id=1y5_8pWm5hijzRiCYm5bsAg_N1kL5EWX_
-  out=upscale_models/1xDeJPG_OmniSR.pth
-https://drive.google.com/uc?export=download&confirm=1&id=1d3wPbtjFcgCkWAMVFQalOuQHdiNmfc5i
-  out=upscale_models/1xDeJPG_OmniSR.pth
 
-# Embeddings
+# ============================================================================
+# EMBEDDINGS
+# ============================================================================
 
 https://huggingface.co/datasets/gsdf/EasyNegative/resolve/main/EasyNegative.safetensors
   out=embeddings/easynegative.safetensors
+
 https://huggingface.co/lenML/DeepNegative/resolve/main/NG_DeepNegative_V1_75T.pt
   out=embeddings/ng_deepnegative_v1_75t.pt
 
+# ============================================================================
 # CLIP
+# ============================================================================
+
 https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors
   out=clip/clip_l.safetensors
+
 https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors
   out=clip/t5xxl_fp16.safetensors
+
 https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn.safetensors
   out=clip/t5xxl_fp8_e4m3fn.safetensors
 
 # CLIP Vision
-
 https://huggingface.co/openai/clip-vit-large-patch14/resolve/main/model.safetensors
   out=clip_vision/clip_vit14.safetensors
+
 https://huggingface.co/stabilityai/control-lora/resolve/main/revision/clip_vision_g.safetensors
   out=clip_vision/control-lora-clip_vision_g.safetensors
 
-# unCLIP
+# ============================================================================
+# CONTROLNET
+# ============================================================================
 
-https://huggingface.co/stabilityai/stable-diffusion-2-1-unclip-small/resolve/main/image_encoder/model.safetensors
-  out=checkpoints/stable-diffusion-2-1-unclip-small.safetensors
-
-# ControlNet v1.1
-# More models: https://huggingface.co/lllyasviel/sd_control_collection
-
+# SD 1.5 ControlNet v1.1
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11f1p_sd15_depth.pth
   out=controlnet/control_v11f1p_sd15_depth.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth
   out=controlnet/control_v11p_sd15_canny.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_openpose.pth
   out=controlnet/control_v11p_sd15_openpose.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11e_sd15_ip2p.pth
   out=controlnet/control_v11e_sd15_ip2p.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11e_sd15_shuffle.pth
   out=controlnet/control_v11e_sd15_shuffle.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11f1e_sd15_tile.pth
   out=controlnet/control_v11f1e_sd15_tile.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_inpaint.pth
   out=controlnet/control_v11p_sd15_inpaint.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_lineart.pth
   out=controlnet/control_v11p_sd15_lineart.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_mlsd.pth
   out=controlnet/control_v11p_sd15_mlsd.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_normalbae.pth
   out=controlnet/control_v11p_sd15_normalbae.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_scribble.pth
   out=controlnet/control_v11p_sd15_scribble.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_seg.pth
   out=controlnet/control_v11p_sd15_seg.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_softedge.pth
   out=controlnet/control_v11p_sd15_softedge.pth
+
 https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15s2_lineart_anime.pth
   out=controlnet/control_v11p_sd15s2_lineart_anime.pth
+
+# FLUX ControlNet
 https://huggingface.co/InstantX/FLUX.1-dev-Controlnet-Union/resolve/967982231cc032f743d7867d8eeb7dd44391c35a/diffusion_pytorch_model.safetensors
   out=controlnet/flux/flux1-dev-controlnet-union.safetensors
-# Control-LoRA
 
+# SDXL ControlNet Union
+https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model.safetensors
+  out=controlnet/diffusion_pytorch_model.safetensors
+
+https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors
+  out=controlnet/diffusion_pytorch_model_promax.safetensors
+
+# Control-LoRA
 https://huggingface.co/stabilityai/control-lora/resolve/main/control-LoRAs-rank256/control-lora-canny-rank256.safetensors
   out=controlnet/control-lora-canny-rank256.safetensors
+
 https://huggingface.co/stabilityai/control-lora/resolve/main/control-LoRAs-rank256/control-lora-depth-rank256.safetensors
   out=controlnet/control-lora-depth-rank256.safetensors
+
 https://huggingface.co/stabilityai/control-lora/resolve/main/control-LoRAs-rank256/control-lora-recolor-rank256.safetensors
   out=controlnet/control-lora-recolor-rank256.safetensors
+
 https://huggingface.co/stabilityai/control-lora/resolve/main/control-LoRAs-rank256/control-lora-sketch-rank256.safetensors
   out=controlnet/control-lora-sketch-rank256.safetensors
 
-
-# UNET
+# ============================================================================
+# UNET (FLUX)
+# ============================================================================
 
 https://huggingface.co/Comfy-Org/flux1-schnell/resolve/main/flux1-schnell-fp8.safetensors
   out=unet/flux1-schnell-fp8.safetensors
+
 https://huggingface.co/lllyasviel/flux1_dev/resolve/main/flux1-dev-fp8.safetensors
   out=unet/flux1-dev-fp8.safetensors
+
+# ============================================================================
 # SAM2
+# ============================================================================
 
 https://huggingface.co/Kijai/sam2-safetensors/resolve/main/sam2_hiera_base_plus.safetensors
   out=sam2/sam2_hiera_base_plus.safetensors
+
 https://huggingface.co/Kijai/sam2-safetensors/resolve/main/sam2_hiera_large.safetensors
   out=sam2/sam2_hiera_large.safetensors
+
 https://huggingface.co/Kijai/sam2-safetensors/resolve/main/sam2_hiera_small.safetensors
   out=sam2/sam2_hiera_small.safetensors
+
 https://huggingface.co/Kijai/sam2-safetensors/resolve/main/sam2_hiera_tiny.safetensors
-  out=unet/sam2_hiera_tiny.safetensors
+  out=sam2/sam2_hiera_tiny.safetensors
 
-
-# YOLO
+# ============================================================================
+# YOLO / ULTRALYTICS
+# ============================================================================
 
 https://huggingface.co/Bingsu/adetailer/resolve/main/face_yolov8m.pt
   out=ultralytics/bbox/face_yolov8m.pt
 
+https://huggingface.co/Bingsu/adetailer/resolve/main/person_yolov8m-seg.pt
+  out=ultralytics/segm/person_yolov8m-seg.pt
 
-  #CheckPoints
-
-https://huggingface.co/SG161222/RealVisXL_V4.0/resolve/main/RealVisXL_V4.0.safetensors?download=true
-out=checkpoints/RealVisXL_V4.0.safetensors
-https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors
-out=checkpoints/sd_xl_turbo_1.0_fp16.safetensors
-https://civitai.com/api/download/models/1199750?type=Model&format=SafeTensor&size=pruned&fp=fp16
-out=checkpoints/perfectponyxl_v50.safetensors
-https://civitai.green/api/download/models/441591?type=Model&format=SafeTensor&size=pruned&fp=fp16
-out=checkpoints/arthemyComics_v70.safetensors
-https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors
-out=checkpoints/clip_l.safetensors
-https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors?download=true
-out=checkpoints/t5xxl_fp16.safetensors
-https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev/resolve/main/flux1-depth-dev.safetensors?download=true
-out=checkpoints/flux1-depth-dev.safetensors
-
-#VAE
-
-https://civitai.green/api/download/models/739267?type=Model&format=SafeTensor
-out=vae/ponyEnhancedVAE_pastelHelperV1.safetensors
-https://civitai.green/api/download/models/83798?type=Model&format=SafeTensor
-out=vae/color101VAE_v1.safetensors
-
-# Upscaling
-
-https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x2.pth?download=true
-out=upscale_models/RealESRGAN_x2.pth
-https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x4.pth?download=true
-out=upscale_models/RealESRGAN_x4.pth
-https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x8.pth?download=true
-out=upscale_models/RealESRGAN_x8.pth
-https://huggingface.co/Kim2091/UltraSharp/resolve/main/4x-UltraSharp.pth?download=true
-out=upscale_models/4x-UltraSharp.pth
-
-# Control Net
-
-https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model.safetensors?download=true
-out=controlnet/diffusion_pytorch_model.safetensors
-https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors?download=true
-out=controlnet/diffusion_pytorch_model_promax.safetensors
-
-#Loras
+# ============================================================================
+# LORAS
+# ============================================================================
 
 https://civitai.green/api/download/models/152309?type=Model&format=SafeTensor
-out=loras/xl_more_art-full_v1.safetensors
+  out=loras/xl_more_art-full_v1.safetensors
+
 https://civitai.green/api/download/models/221966?type=Model&format=SafeTensor
-out=loras/EpicCanvas-Genesis-V1.safetensors
-
-# YOLO
-
-https://huggingface.co/Bingsu/adetailer/resolve/main/face_yolov8m.pt
-out=ultralytics/bbox/face_yolov8m.pt
-https://huggingface.co/Bingsu/adetailer/resolve/main/person_yolov8m-seg.pt?download=true
-out=ultralytics/segm/person_yolov8m-seg.pt
+  out=loras/EpicCanvas-Genesis-V1.safetensors

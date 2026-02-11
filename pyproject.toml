@@ -1,0 +1,191 @@
+[project]
+name = "comfyui-workspace"
+version = "1.0.0"
+description = "ComfyUI workspace with custom nodes and models"
+readme = "README.MD"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    # Core ML frameworks
+    "torch>=2.4.0",
+    "torchvision",
+    "torchaudio",
+    "torchdiffeq",
+    "torchsde",
+    "torchmetrics",
+    "torchtyping",
+    
+    # Transformers & Diffusion
+    "transformers>=4.47.0",
+    "diffusers>=0.31.0",
+    "accelerate>=1.2.1",
+    "safetensors",
+    "huggingface-hub",
+    
+    # Image processing
+    "opencv-python-headless",
+    "opencv-contrib-python-headless",
+    "pillow",
+    "scikit-image",
+    "kornia",
+    "albumentations",
+    "imageio",
+    "imageio-ffmpeg",
+    
+    # CLIP & Vision
+    "open-clip-torch",
+    "clip-interrogator",
+    
+    # Video
+    "moviepy",
+    "ffmpeg-python",
+    
+    # 3D & Mesh
+    "trimesh[easy]",
+    "plyfile",
+    "pymcubes",
+    "pygltflib",
+    "xatlas",
+    
+    # Scientific computing
+    "numpy",
+    "scipy",
+    "pandas",
+    "matplotlib",
+    "scikit-learn",
+    
+    # Deep learning utilities
+    "einops",
+    "timm",
+    "pytorch-lightning",
+    "pytorch-msssim",
+    "fairscale",
+    "fvcore",
+    
+    # Utilities
+    "tqdm",
+    "rich",
+    "rich-argparse",
+    "typer",
+    "pyyaml",
+    "omegaconf",
+    "python-dotenv",
+    "requests",
+    "aiohttp",
+    "httpx>=0.23.0,<1",
+    "filelock",
+    "cachetools",
+    "joblib",
+    "psutil",
+    "py-cpuinfo",
+    "pynvml",
+    "watchdog",
+    
+    # Face & Body
+    "insightface",
+    "mediapipe",
+    "ultralytics",
+    
+    # Segmentation
+    "segment-anything",
+    "rembg",
+    "transparent-background",
+    
+    # Text processing
+    "ftfy",
+    "regex",
+    "sentencepiece",
+    "tokenizers",
+    "lark",
+    "compel",
+    
+    # Color & Style
+    "color-matcher",
+    "colour-science",
+    "pilgram",
+    "glitch-this",
+    "webcolors",
+    
+    # PDF & Documents
+    "pymupdf",
+    "pypdf2",
+    "reportlab",
+    # "svglib",  # Requires system cairo library
+    
+    # Git & GitHub
+    "gitpython",
+    "pygit2",
+    "pygithub",
+    
+    # Audio
+    "librosa",
+    "soundfile",
+    "sounddevice",
+    
+    # Misc ML
+    "onnxruntime",
+    "spandrel",
+    "nerfacc",
+    "roma",
+    "jaxtyping",
+    "numba",
+    
+    # Other utilities
+    "addict",
+    "deepdiff",
+    "dill",
+    "ninja",
+    "numexpr",
+    "packaging",
+    "piexif",
+    "pyhocon",
+    "pykalman",
+    "pyopengl",
+    "pyopenssl",
+    "python-dateutil",
+    "qrcode[pil]",
+    "requirements-parser",
+    "simpleeval",
+    "typing-extensions",
+    "yacs",
+    "yapf",
+    "mss",
+    "glfw",
+    "importlib-metadata",
+    
+    # OpenAI
+    "openai",
+]
+
+[project.optional-dependencies]
+cuda = [
+    "cupy-cuda12x",
+]
+dlib = [
+    "dlib",
+]
+jax = [
+    "jax>=0.4.28",
+]
+
+# Tell setuptools this is not a package (just a workspace)
+[tool.setuptools]
+packages = []
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+]
+
+[tool.uv.sources]
+# Install CLIP from GitHub
+clip = { git = "https://github.com/openai/CLIP.git" }
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
