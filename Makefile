@@ -29,21 +29,27 @@ help: ## Show this help message
 # ============================================================================
 
 check-uv: ## Check if UV is installed
-	@command -v uv >/dev/null 2>&1 || { \
-		echo "$(RED)UV is not installed. Installing...$(NC)"; \
+	@if command -v uv >/dev/null 2>&1; then \
+		echo "$(GREEN)✓ UV is installed:$(NC) $$(uv --version)"; \
+	else \
+		echo "$(RED)✗ UV is not installed. Installing...$(NC)"; \
 		curl -LsSf https://astral.sh/uv/install.sh | sh; \
 		echo "$(YELLOW)Please restart your shell or run: source ~/.bashrc$(NC)"; \
-	}
+	fi
 
 check-aria2: ## Check if aria2c is installed
-	@command -v aria2c >/dev/null 2>&1 || { \
-		echo "$(RED)aria2c is not installed.$(NC)"; \
+	@if command -v aria2c >/dev/null 2>&1; then \
+		echo "$(GREEN)✓ aria2c is installed:$(NC) $$(aria2c --version | head -1)"; \
+	else \
+		echo "$(RED)✗ aria2c is not installed.$(NC)"; \
 		echo "Install with:"; \
 		echo "  macOS: brew install aria2"; \
 		echo "  Ubuntu: sudo apt install aria2"; \
 		echo "  Fedora: sudo dnf install aria2"; \
 		exit 1; \
-	}
+	fi
+
+check-deps: check-uv check-aria2 ## Check all dependencies
 
 setup: check-uv ## Initial setup: create venv, clone ComfyUI, install deps
 	@echo "$(GREEN)Setting up ComfyUI workspace...$(NC)"
