@@ -88,9 +88,9 @@ Run `make help` to see all available commands:
 ├── setup/                      # Scripts and config files
 │   ├── models.txt              # Model download list
 │   ├── nodes.txt               # Custom nodes list
-│   ├── add_model.sh            # Script to add models
-│   ├── add_node.sh             # Script to add nodes
-│   └── download_nodes.sh       # Script to download nodes
+│   ├── add_model.py            # Script to add models
+│   ├── add_node.py             # Script to add nodes
+│   └── download_nodes.py       # Script to download nodes
 ├── comfy/                      # ComfyUI installation (created by setup)
 └── data/                       # All persistent data (created by setup)
     ├── custom_nodes/           # Custom node installations
@@ -171,10 +171,10 @@ Then run `make download-models`.
 ### Via Script
 ```bash
 # Keep original filename
-./setup/add_model.sh "https://example.com/model.safetensors" checkpoints
+python setup/add_model.py "https://example.com/model.safetensors" checkpoints
 
 # With custom filename
-./setup/add_model.sh "https://example.com/model.safetensors" loras "my_lora.safetensors"
+python setup/add_model.py "https://example.com/model.safetensors" loras "my_lora.safetensors"
 ```
 
 ## Adding Custom Nodes
@@ -197,7 +197,7 @@ Then run `make download-nodes`.
 
 ### Via Script
 ```bash
-./setup/add_node.sh "https://github.com/username/ComfyUI-NodeName"
+python setup/add_node.py "https://github.com/username/ComfyUI-NodeName"
 ```
 
 ## Troubleshooting

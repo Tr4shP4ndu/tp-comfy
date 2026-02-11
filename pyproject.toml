@@ -64,6 +64,7 @@ dependencies = [
     # Utilities
     "tqdm",
     "rich",
+    "structlog",
     "rich-argparse",
     "typer",
     "pyyaml",
