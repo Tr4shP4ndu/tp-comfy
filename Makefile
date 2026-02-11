@@ -72,7 +72,7 @@ setup: check-uv ## Initial setup: create venv, clone ComfyUI, install deps
 	
 	@echo "$(GREEN)Installing dependencies...$(NC)"
 	@uv pip install -r $(COMFY_DIR)/requirements.txt
-	@uv pip install -e .
+	@uv pip install .
 	
 	@# Copy extra_model_paths.yaml to ComfyUI
 	@cp extra_model_paths.yaml $(COMFY_DIR)/extra_model_paths.yaml
@@ -87,12 +87,12 @@ setup: check-uv ## Initial setup: create venv, clone ComfyUI, install deps
 install: check-uv ## Install/reinstall Python dependencies
 	@echo "$(GREEN)Installing dependencies...$(NC)"
 	@uv pip install -r $(COMFY_DIR)/requirements.txt
-	@uv pip install -e .
+	@uv pip install .
 	@echo "$(GREEN)Dependencies installed!$(NC)"
 
 install-cuda: install ## Install with CUDA support (cupy)
 	@echo "$(GREEN)Installing CUDA dependencies...$(NC)"
-	@uv pip install -e ".[cuda]"
+	@uv pip install ".[cuda]"
 
 sync: check-uv ## Sync dependencies (fast update)
 	@uv pip sync
@@ -161,7 +161,7 @@ update: ## Update ComfyUI and custom nodes
 	
 	@echo "$(GREEN)Updating dependencies...$(NC)"
 	@uv pip install -r $(COMFY_DIR)/requirements.txt
-	@uv pip install -e .
+	@uv pip install .
 	
 	@echo "$(GREEN)Update complete!$(NC)"
 

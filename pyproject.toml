@@ -167,9 +167,12 @@ jax = [
     "jax>=0.4.28",
 ]
 
-[tool.uv]
-# UV configuration
-dev-dependencies = [
+# Tell setuptools this is not a package (just a workspace)
+[tool.setuptools]
+packages = []
+
+[dependency-groups]
+dev = [
     "pytest",
     "pytest-cov",
     "ruff",
@@ -181,7 +184,7 @@ clip = { git = "https://github.com/openai/CLIP.git" }
 
 [tool.ruff]
 line-length = 120
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]
