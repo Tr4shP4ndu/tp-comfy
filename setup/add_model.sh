@@ -9,7 +9,7 @@
 
 set -Eeuo pipefail
 
-CONFIG_FILE="${CONFIG_FILE:-config/models.txt}"
+CONFIG_FILE="${CONFIG_FILE:-setup/models.txt}"
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'

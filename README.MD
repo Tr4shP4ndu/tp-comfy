@@ -81,31 +81,29 @@ Run `make help` to see all available commands:
 
 ```
 .
-├── comfy/                  # ComfyUI installation (git clone)
-├── data/                   # All persistent data
-│   ├── config/            # Configuration files
-│   ├── custom_nodes/      # Custom node installations
-│   ├── input/             # Input images
-│   ├── output/            # Generated images
-│   ├── workflows/         # Saved workflows
-│   └── models/            # AI models
-│       ├── checkpoints/   # Main SD models
-│       ├── clip/          # CLIP text encoders
-│       ├── clip_vision/   # CLIP vision models
-│       ├── controlnet/    # ControlNet models
-│       ├── embeddings/    # Textual inversions
-│       ├── loras/         # LoRA models
-│       ├── unet/          # UNET models (FLUX)
-│       ├── upscale_models/# Upscaling models
-│       ├── vae/           # VAE models
-│       └── ...
-├── config/
-│   └── models.txt         # Model download list
-├── scripts/
-│   └── download_nodes.sh  # Custom node download script
-├── Makefile               # Build automation
-├── pyproject.toml         # Python dependencies
-└── extra_model_paths.yaml # ComfyUI model paths config
+├── Makefile                    # Build automation
+├── README.MD                   # This file
+├── pyproject.toml              # Python dependencies
+├── extra_model_paths.yaml      # ComfyUI model paths config
+├── setup/                      # Scripts and config files
+│   ├── models.txt              # Model download list
+│   ├── nodes.txt               # Custom nodes list
+│   ├── add_model.sh            # Script to add models
+│   ├── add_node.sh             # Script to add nodes
+│   └── download_nodes.sh       # Script to download nodes
+├── comfy/                      # ComfyUI installation (created by setup)
+└── data/                       # All persistent data (created by setup)
+    ├── custom_nodes/           # Custom node installations
+    ├── input/                  # Input images
+    ├── output/                 # Generated images
+    ├── workflows/              # Saved workflows
+    └── models/                 # AI models
+        ├── checkpoints/        # Main SD models
+        ├── loras/              # LoRA models
+        ├── vae/                # VAE models
+        ├── controlnet/         # ControlNet models
+        ├── upscale_models/     # Upscaling models
+        └── ...                 # Other model folders
 ```
 
 ## Included Models
@@ -146,7 +144,7 @@ Run `make help` to see all available commands:
 - **Video**: Frame interpolation, video export
 - **Utilities**: Logic nodes, prompt styling, image saving
 
-See `config/nodes.txt` for the full list.
+See `setup/nodes.txt` for the full list.
 
 ## Adding Custom Models
 
@@ -161,7 +159,7 @@ This will prompt you for:
 3. **New filename** - Optional, leave empty to keep original name
 
 ### Manual
-Edit `config/models.txt` directly:
+Edit `setup/models.txt` directly:
 
 ```
 https://example.com/model.safetensors
@@ -173,10 +171,10 @@ Then run `make download-models`.
 ### Via Script
 ```bash
 # Keep original filename
-./scripts/add_model.sh "https://example.com/model.safetensors" checkpoints
+./setup/add_model.sh "https://example.com/model.safetensors" checkpoints
 
 # With custom filename
-./scripts/add_model.sh "https://example.com/model.safetensors" loras "my_lora.safetensors"
+./setup/add_model.sh "https://example.com/model.safetensors" loras "my_lora.safetensors"
 ```
 
 ## Adding Custom Nodes
@@ -189,7 +187,7 @@ make add-node
 This will prompt you for the GitHub repository URL.
 
 ### Manual
-Edit `config/nodes.txt` and add the GitHub URL:
+Edit `setup/nodes.txt` and add the GitHub URL:
 
 ```
 https://github.com/username/ComfyUI-NodeName.git
@@ -199,7 +197,7 @@ Then run `make download-nodes`.
 
 ### Via Script
 ```bash
-./scripts/add_node.sh "https://github.com/username/ComfyUI-NodeName"
+./setup/add_node.sh "https://github.com/username/ComfyUI-NodeName"
 ```
 
 ## Troubleshooting

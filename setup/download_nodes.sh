@@ -6,7 +6,7 @@
 set -Eeuo pipefail
 
 NODES_DIR="${1:-data/custom_nodes}"
-CONFIG_FILE="${2:-config/nodes.txt}"
+CONFIG_FILE="${2:-setup/nodes.txt}"
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'

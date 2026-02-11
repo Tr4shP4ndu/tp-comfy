@@ -109,11 +109,11 @@ sync: check-uv ## Sync dependencies (fast update)
 
 download-nodes: ## Download/update custom nodes
 	@echo "$(GREEN)Downloading custom nodes...$(NC)"
-	@bash scripts/download_nodes.sh $(DATA_DIR)/custom_nodes config/nodes.txt
+	@bash setup/download_nodes.sh $(DATA_DIR)/custom_nodes setup/nodes.txt
 
 download-models: check-aria2 ## Download AI models (checkpoints, VAE, etc.)
 	@echo "$(GREEN)Downloading models...$(NC)"
-	@aria2c -x 10 --disable-ipv6 --input-file config/models.txt --dir $(DATA_DIR)/models --continue
+	@aria2c -x 10 --disable-ipv6 --input-file setup/models.txt --dir $(DATA_DIR)/models --continue
 	@echo "$(GREEN)Models downloaded!$(NC)"
 
 download-all: download-nodes download-models ## Download everything (nodes + models)
@@ -170,7 +170,7 @@ add-model: ## Add a model to download list (interactive)
 	echo "└─────────────────────────────────────────────────────────────────────────────┘"; \
 	echo ""; \
 	read -p "New filename (press ENTER to skip): " filename; \
-	bash scripts/add_model.sh "$$url" "$$folder" "$$filename"
+	bash setup/add_model.sh "$$url" "$$folder" "$$filename"
 
 add-node: ## Add a custom node to download list (interactive)
 	@echo "$(GREEN)Add Custom Node$(NC)"
@@ -189,15 +189,15 @@ add-node: ## Add a custom node to download list (interactive)
 	@echo "└─────────────────────────────────────────────────────────────────────────────┘"
 	@echo ""
 	@read -p "GitHub URL: " url; \
-	bash scripts/add_node.sh "$$url"
+	bash setup/add_node.sh "$$url"
 
 list-models: ## List all models in download config
-	@echo "$(GREEN)Models in config/models.txt:$(NC)"
-	@grep "out=" config/models.txt | sed 's/.*out=/  /' | sort
+	@echo "$(GREEN)Models in setup/models.txt:$(NC)"
+	@grep "out=" setup/models.txt | sed 's/.*out=/  /' | sort
 
 list-nodes: ## List all custom nodes in download config
-	@echo "$(GREEN)Custom nodes in config/nodes.txt:$(NC)"
-	@grep -v "^#" config/nodes.txt | grep -v "^$$" | sed 's|.*/||' | sed 's|\.git||' | sort
+	@echo "$(GREEN)Custom nodes in setup/nodes.txt:$(NC)"
+	@grep -v "^#" setup/nodes.txt | grep -v "^$$" | sed 's|.*/||' | sed 's|\.git||' | sort
 
 # ============================================================================
 # RUNNING COMFYUI
@@ -243,7 +243,7 @@ update: ## Update ComfyUI and custom nodes
 	@cd $(COMFY_DIR) && git pull --ff-only
 	
 	@echo "$(GREEN)Updating custom nodes...$(NC)"
-	@bash scripts/download_nodes.sh $(DATA_DIR)/custom_nodes
+	@bash setup/download_nodes.sh $(DATA_DIR)/custom_nodes
 	
 	@echo "$(GREEN)Updating dependencies...$(NC)"
 	@uv pip install -r $(COMFY_DIR)/requirements.txt
@@ -253,7 +253,7 @@ update: ## Update ComfyUI and custom nodes
 
 update-nodes: ## Update only custom nodes
 	@echo "$(GREEN)Updating custom nodes...$(NC)"
-	@bash scripts/download_nodes.sh $(DATA_DIR)/custom_nodes
+	@bash setup/download_nodes.sh $(DATA_DIR)/custom_nodes
 
 install-node-deps: ## Install dependencies for all custom nodes
 	@echo "$(GREEN)Installing custom node dependencies...$(NC)"
