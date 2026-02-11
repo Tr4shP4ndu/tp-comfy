@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 #
 # Download/update ComfyUI custom nodes
-# Usage: ./download_nodes.sh <custom_nodes_directory>
+# Usage: ./download_nodes.sh <custom_nodes_directory> [config_file]
 
 set -Eeuo pipefail
 
 NODES_DIR="${1:-data/custom_nodes}"
+CONFIG_FILE="${2:-config/nodes.txt}"
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -14,23 +15,30 @@ NC='\033[0m'
 
 # Create directory if it doesn't exist
 mkdir -p "$NODES_DIR"
-cd "$NODES_DIR"
 
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}Downloading/Updating Custom Nodes${NC}"
 echo -e "${GREEN}========================================${NC}"
+echo ""
+echo "Nodes directory: $NODES_DIR"
+echo "Config file: $CONFIG_FILE"
+echo ""
 
 function clone_or_pull() {
     local url="$1"
     local repo_name
     
     # Extract repository name from URL
-    if [[ $url =~ ^(.*[/:])(.*)(\.git)$ ]] || [[ $url =~ ^(http.*\/)(.*)$ ]]; then
+    if [[ $url =~ ^(.*[/:])(.*)(\.git)$ ]]; then
+        repo_name="${BASH_REMATCH[2]}"
+    elif [[ $url =~ ^(http.*\/)(.*)$ ]]; then
         repo_name="${BASH_REMATCH[2]}"
     else
         echo -e "${RED}[ERROR] Invalid URL: $url${NC}"
         return 1
     fi
+    
+    cd "$NODES_DIR"
     
     if [ -d "$repo_name" ]; then
         echo -e "${YELLOW}Updating ${repo_name}...${NC}"
@@ -44,92 +52,22 @@ function clone_or_pull() {
     fi
 }
 
-# Custom node repositories
-repos=(
-    # Manager & Core
-    "https://github.com/ltdrdata/ComfyUI-Manager.git"
-    "https://github.com/ltdrdata/ComfyUI-Impact-Pack.git"
-    "https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git"
-    
-    # Utility Nodes
-    "https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git"
-    "https://github.com/rgthree/rgthree-comfy.git"
-    "https://github.com/chrisgoringe/cg-use-everywhere.git"
-    "https://github.com/chrisgoringe/cg-image-picker.git"
-    "https://github.com/crystian/ComfyUI-Crystools.git"
-    "https://github.com/crystian/ComfyUI-Crystools-save.git"
-    "https://github.com/cubiq/ComfyUI_essentials.git"
-    "https://github.com/kijai/ComfyUI-KJNodes.git"
-    "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes.git"
-    "https://github.com/jags111/efficiency-nodes-comfyui.git"
-    "https://github.com/yolain/ComfyUI-Easy-Use.git"
-    "https://github.com/bash-j/mikey_nodes.git"
-    "https://github.com/Derfuu/Derfuu_ComfyUI_ModdedNodes.git"
-    "https://github.com/theUpsider/ComfyUI-Logic.git"
-    "https://github.com/aria1th/ComfyUI-LogicUtils.git"
-    "https://github.com/GHOSTLXH/ComfyUI-Counternodes.git"
-    "https://github.com/daxcay/ComfyUI-JDCN.git"
-    "https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes.git"
-    "https://github.com/TTPlanetPig/Comfyui_TTP_Toolset.git"
-    "https://github.com/shadowcz007/comfyui-mixlab-nodes.git"
-    
-    # Image Saving & Output
-    "https://github.com/giriss/comfy-image-saver.git"
-    "https://github.com/SLAPaper/ComfyUI-Image-Selector.git"
-    
-    # Prompt & Styling
-    "https://github.com/twri/sdxl_prompt_styler.git"
-    "https://github.com/shiimizu/ComfyUI_smZNodes.git"
-    "https://github.com/florestefano1975/comfyui-portrait-master.git"
-    "https://github.com/KoreTeknology/ComfyUI-Universal-Styler.git"
-    
-    # Upscaling
-    "https://github.com/ssitu/ComfyUI_UltimateSDUpscale.git"
-    "https://github.com/yuvraj108c/ComfyUI_InvSR.git"
-    
-    # ControlNet & Depth
-    "https://github.com/Fannovel16/comfyui_controlnet_aux.git"
-    "https://github.com/kijai/ComfyUI-depth-fm.git"
-    "https://github.com/kijai/ComfyUI-Geowizard.git"
-    "https://github.com/kijai/ComfyUI-Marigold.git"
-    "https://github.com/risunobushi/ComfyUI_DisplacementMapTools.git"
-    
-    # Face & Portrait
-    "https://github.com/cubiq/ComfyUI_InstantID.git"
-    "https://github.com/cubiq/ComfyUI_IPAdapter_plus.git"
-    "https://github.com/cubiq/ComfyUI_FaceAnalysis.git"
-    "https://github.com/lldacing/ComfyUI_PuLID_Flux_ll.git"
-    "https://github.com/sipie800/ComfyUI-PuLID-Flux-Enhanced.git"
-    "https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait.git"
-    "https://github.com/kijai/ComfyUI-LivePortraitKJ.git"
-    
-    # Segmentation & Detection
-    "https://github.com/storyicon/comfyui_segment_anything.git"
-    "https://github.com/kijai/ComfyUI-segment-anything-2.git"
-    
-    # Video & Animation
-    "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git"
-    "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git"
-    "https://github.com/FizzleDorf/ComfyUI_FizzNodes.git"
-    "https://github.com/AInseven/ComfyUI-fastblend.git"
-    "https://github.com/MrForExample/ComfyUI-AnimateAnyone-Evolved.git"
-    
-    # Florence & Vision
-    "https://github.com/kijai/ComfyUI-Florence2.git"
-    "https://github.com/pythongosssss/ComfyUI-WD14-Tagger.git"
-    
-    # Layer & Advanced
-    "https://github.com/huchenlei/ComfyUI-layerdiffuse.git"
-    "https://github.com/mcmonkeyprojects/sd-dynamic-thresholding.git"
-    "https://github.com/sipherxyz/comfyui-art-venture.git"
-    "https://github.com/picturesonpictures/comfy_PoP.git"
-    "https://github.com/melMass/comfy_mtb.git"
-    
-    # Translation
-    "https://github.com/AIGODLIKE/AIGODLIKE-ComfyUI-Translation.git"
-)
+# Check if config file exists
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo -e "${RED}Config file not found: $CONFIG_FILE${NC}"
+    exit 1
+fi
 
-echo ""
+# Read repos from config file (skip comments and empty lines)
+repos=()
+while IFS= read -r line || [[ -n "$line" ]]; do
+    # Skip empty lines and comments
+    line=$(echo "$line" | sed 's/#.*//' | xargs)
+    if [ -n "$line" ]; then
+        repos+=("$line")
+    fi
+done < "$CONFIG_FILE"
+
 echo "Found ${#repos[@]} repositories to process"
 echo ""
 

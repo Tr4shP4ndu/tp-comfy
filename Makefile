@@ -103,7 +103,7 @@ sync: check-uv ## Sync dependencies (fast update)
 
 download-nodes: ## Download/update custom nodes
 	@echo "$(GREEN)Downloading custom nodes...$(NC)"
-	@bash scripts/download_nodes.sh $(DATA_DIR)/custom_nodes
+	@bash scripts/download_nodes.sh $(DATA_DIR)/custom_nodes config/nodes.txt
 
 download-models: check-aria2 ## Download AI models (checkpoints, VAE, etc.)
 	@echo "$(GREEN)Downloading models...$(NC)"
@@ -112,6 +112,86 @@ download-models: check-aria2 ## Download AI models (checkpoints, VAE, etc.)
 
 download-all: download-nodes download-models ## Download everything (nodes + models)
 	@echo "$(GREEN)All downloads complete!$(NC)"
+
+# ============================================================================
+# ADD MODELS & NODES
+# ============================================================================
+
+add-model: ## Add a model to download list (interactive)
+	@echo "$(GREEN)Add Model to Download List$(NC)"
+	@echo "=========================="
+	@echo ""
+	@echo "┌─────────────────────────────────────────────────────────────────────────────┐"
+	@echo "│ $(YELLOW)STEP 1: Model URL$(NC)                                                          │"
+	@echo "│                                                                             │"
+	@echo "│ Paste the direct download URL for the model file.                           │"
+	@echo "│                                                                             │"
+	@echo "│ $(YELLOW)Example input:$(NC)                                                              │"
+	@echo "│ $(GREEN)https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/model.safetensors$(NC) │"
+	@echo "└─────────────────────────────────────────────────────────────────────────────┘"
+	@echo ""
+	@read -p "Model URL: " url; \
+	echo ""; \
+	echo "┌─────────────────────────────────────────────────────────────────────────────┐"; \
+	echo "│ $(YELLOW)STEP 2: Target Folder$(NC)                                                       │"; \
+	echo "│                                                                             │"; \
+	echo "│ Where should this model be saved?                                           │"; \
+	echo "│                                                                             │"; \
+	echo "│ $(YELLOW)Options:$(NC)                                                                     │"; \
+	echo "│   checkpoints    - Main models (SD 1.5, SDXL, FLUX, etc.)                   │"; \
+	echo "│   loras          - LoRA/LyCORIS models                                      │"; \
+	echo "│   vae            - VAE models                                               │"; \
+	echo "│   controlnet     - ControlNet models                                        │"; \
+	echo "│   upscale_models - Upscalers (ESRGAN, etc.)                                 │"; \
+	echo "│   embeddings     - Textual inversions / embeddings                          │"; \
+	echo "│   clip           - CLIP text encoders                                       │"; \
+	echo "│   unet           - UNET models (for FLUX)                                   │"; \
+	echo "│                                                                             │"; \
+	echo "│ $(YELLOW)Example input:$(NC)                                                               │"; \
+	echo "│ $(GREEN)checkpoints$(NC)                                                                   │"; \
+	echo "└─────────────────────────────────────────────────────────────────────────────┘"; \
+	echo ""; \
+	read -p "Target folder: " folder; \
+	echo ""; \
+	echo "┌─────────────────────────────────────────────────────────────────────────────┐"; \
+	echo "│ $(YELLOW)STEP 3: Filename (optional)$(NC)                                                  │"; \
+	echo "│                                                                             │"; \
+	echo "│ Press ENTER to keep the original filename from the URL.                     │"; \
+	echo "│ Or type a new name if you want to rename it.                                │"; \
+	echo "│                                                                             │"; \
+	echo "│ $(YELLOW)Example input:$(NC)                                                               │"; \
+	echo "│ $(GREEN)my_custom_model.safetensors$(NC)   (or just press ENTER)                           │"; \
+	echo "└─────────────────────────────────────────────────────────────────────────────┘"; \
+	echo ""; \
+	read -p "New filename (press ENTER to skip): " filename; \
+	bash scripts/add_model.sh "$$url" "$$folder" "$$filename"
+
+add-node: ## Add a custom node to download list (interactive)
+	@echo "$(GREEN)Add Custom Node$(NC)"
+	@echo "==============="
+	@echo ""
+	@echo "┌─────────────────────────────────────────────────────────────────────────────┐"
+	@echo "│ $(YELLOW)GitHub Repository URL$(NC)                                                       │"
+	@echo "│                                                                             │"
+	@echo "│ Paste the GitHub URL for the custom node repository.                        │"
+	@echo "│ The .git extension is optional.                                             │"
+	@echo "│                                                                             │"
+	@echo "│ $(YELLOW)Example inputs:$(NC)                                                             │"
+	@echo "│ $(GREEN)https://github.com/ltdrdata/ComfyUI-Manager$(NC)                                  │"
+	@echo "│ $(GREEN)https://github.com/cubiq/ComfyUI_essentials.git$(NC)                              │"
+	@echo "│ $(GREEN)https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite$(NC)                      │"
+	@echo "└─────────────────────────────────────────────────────────────────────────────┘"
+	@echo ""
+	@read -p "GitHub URL: " url; \
+	bash scripts/add_node.sh "$$url"
+
+list-models: ## List all models in download config
+	@echo "$(GREEN)Models in config/models.txt:$(NC)"
+	@grep "out=" config/models.txt | sed 's/.*out=/  /' | sort
+
+list-nodes: ## List all custom nodes in download config
+	@echo "$(GREEN)Custom nodes in config/nodes.txt:$(NC)"
+	@grep -v "^#" config/nodes.txt | grep -v "^$$" | sed 's|.*/||' | sed 's|\.git||' | sort
 
 # ============================================================================
 # RUNNING COMFYUI

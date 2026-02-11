@@ -61,6 +61,10 @@ Run `make help` to see all available commands:
 | `make download-nodes` | Download/update custom nodes |
 | `make download-models` | Download AI models |
 | `make download-all` | Download everything (nodes + models) |
+| `make add-model` | Add a new model to download list (interactive) |
+| `make add-node` | Add a new custom node (interactive) |
+| `make list-models` | List all models in config |
+| `make list-nodes` | List all custom nodes in config |
 | `make run` | Start ComfyUI (GPU) |
 | `make run-cpu` | Start ComfyUI (CPU only) |
 | `make run-lowvram` | Start with low VRAM mode |
@@ -142,15 +146,22 @@ Run `make help` to see all available commands:
 - **Video**: Frame interpolation, video export
 - **Utilities**: Logic nodes, prompt styling, image saving
 
-See `scripts/download_nodes.sh` for the full list.
+See `config/nodes.txt` for the full list.
 
 ## Adding Custom Models
 
-### Manual Download
-Place model files directly in the appropriate `data/models/` subdirectory.
+### Interactive (Recommended)
+```bash
+make add-model
+```
 
-### Add to Download List
-Edit `config/models.txt` to add models to the automatic download list:
+This will prompt you for:
+1. **Model URL** - Direct download link
+2. **Target folder** - Where to save (checkpoints, loras, vae, etc.)
+3. **New filename** - Optional, leave empty to keep original name
+
+### Manual
+Edit `config/models.txt` directly:
 
 ```
 https://example.com/model.safetensors
@@ -158,6 +169,38 @@ https://example.com/model.safetensors
 ```
 
 Then run `make download-models`.
+
+### Via Script
+```bash
+# Keep original filename
+./scripts/add_model.sh "https://example.com/model.safetensors" checkpoints
+
+# With custom filename
+./scripts/add_model.sh "https://example.com/model.safetensors" loras "my_lora.safetensors"
+```
+
+## Adding Custom Nodes
+
+### Interactive (Recommended)
+```bash
+make add-node
+```
+
+This will prompt you for the GitHub repository URL.
+
+### Manual
+Edit `config/nodes.txt` and add the GitHub URL:
+
+```
+https://github.com/username/ComfyUI-NodeName.git
+```
+
+Then run `make download-nodes`.
+
+### Via Script
+```bash
+./scripts/add_node.sh "https://github.com/username/ComfyUI-NodeName"
+```
 
 ## Troubleshooting
 
