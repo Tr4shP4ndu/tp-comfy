@@ -1,0 +1,41 @@
+# ComfyUI Extra Model Paths Configuration
+# This file tells ComfyUI where to find models, custom nodes, and data
+# Place this file in the ComfyUI directory or use --extra-model-paths-config
+
+comfy:
+  # Base path for all data (relative to workspace root)
+  base_path: ../data
+  
+  # Custom nodes directory
+  custom_nodes: custom_nodes
+  
+  # Input/Output directories
+  input: input
+  output: output
+  workflows: workflows
+  
+  # Model directories (relative to base_path)
+  checkpoints: models/checkpoints
+  clip: models/clip
+  clip_vision: models/clip_vision
+  configs: models/configs
+  controlnet: models/controlnet
+  diffusers: models/diffusers
+  diffusion_models: models/diffusion_models
+  embeddings: models/embeddings
+  gligen: models/gligen
+  hypernetworks: models/hypernetworks
+  loras: models/loras
+  photomaker: models/photomaker
+  style_models: models/style_models
+  unet: models/unet
+  upscale_models: models/upscale_models
+  vae: models/vae
+  vae_approx: models/vae_approx
+  
+  # Additional model types
+  sam2: models/sam2
+  ultralytics: models/ultralytics
+  mmdets: models/mmdets
+  onnx: models/onnx
+  liveportrait: models/liveportrait
