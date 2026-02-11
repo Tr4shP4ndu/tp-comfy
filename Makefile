@@ -54,6 +54,9 @@ check-aria2: ## Check if aria2c is installed
 
 check-deps: check-uv check-aria2 ## Check all dependencies
 
+detect-gpu: ## Detect GPU and show recommended PyTorch
+	@$(PYTHON) setup/detect_gpu.py
+
 setup: check-uv ## Initial setup: create venv, clone ComfyUI, install deps
 	@echo "$(GREEN)Setting up ComfyUI workspace...$(NC)"
 	
@@ -79,7 +82,16 @@ setup: check-uv ## Initial setup: create venv, clone ComfyUI, install deps
 	@echo "$(GREEN)Creating virtual environment with UV...$(NC)"
 	@uv venv --python $(PYTHON_VERSION)
 	
-	@echo "$(GREEN)Installing dependencies...$(NC)"
+	@# Install base dependencies first
+	@echo "$(GREEN)Installing base dependencies...$(NC)"
+	@uv pip install pyyaml structlog
+	
+	@# Detect GPU and install appropriate PyTorch
+	@echo "$(GREEN)Detecting GPU and installing PyTorch...$(NC)"
+	@$(PYTHON) setup/detect_gpu.py --install
+	
+	@# Install remaining dependencies
+	@echo "$(GREEN)Installing ComfyUI dependencies...$(NC)"
 	@uv pip install -r $(COMFY_DIR)/requirements.txt
 	@uv pip install .
 	
@@ -92,12 +104,33 @@ setup: check-uv ## Initial setup: create venv, clone ComfyUI, install deps
 	@echo "  1. make download-nodes  - Download custom nodes"
 	@echo "  2. make download-models - Download AI models"
 	@echo "  3. make run             - Start ComfyUI"
+	@echo ""
+	@echo "$(YELLOW)If you have GPU issues, try:$(NC)"
+	@echo "  make run-fp32     - Force 32-bit precision"
+	@echo "  make run-lowvram  - Low VRAM mode"
+	@echo "  make run-cpu      - CPU only mode"
 
 install: check-uv ## Install/reinstall Python dependencies
 	@echo "$(GREEN)Installing dependencies...$(NC)"
 	@uv pip install -r $(COMFY_DIR)/requirements.txt
 	@uv pip install .
 	@echo "$(GREEN)Dependencies installed!$(NC)"
+
+install-pytorch: ## Auto-detect GPU and install correct PyTorch
+	@echo "$(GREEN)Installing PyTorch for your GPU...$(NC)"
+	@$(PYTHON) setup/detect_gpu.py --install
+
+install-pytorch-cuda124: ## Install PyTorch with CUDA 12.4
+	@echo "$(GREEN)Installing PyTorch with CUDA 12.4...$(NC)"
+	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+
+install-pytorch-cuda118: ## Install PyTorch with CUDA 11.8
+	@echo "$(GREEN)Installing PyTorch with CUDA 11.8...$(NC)"
+	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+install-pytorch-cpu: ## Install PyTorch CPU-only
+	@echo "$(GREEN)Installing PyTorch (CPU only)...$(NC)"
+	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
 install-cuda: install ## Install with CUDA support (cupy)
 	@echo "$(GREEN)Installing CUDA dependencies...$(NC)"
@@ -111,13 +144,10 @@ sync: check-uv ## Sync dependencies (fast update)
 # ============================================================================
 
 download-nodes: ## Download/update custom nodes
-	@echo "$(GREEN)Downloading custom nodes...$(NC)"
-	@$(PYTHON) setup/download_nodes.py $(DATA_DIR)/custom_nodes setup/nodes.txt
+	@$(PYTHON) setup/download_nodes.py $(DATA_DIR)/custom_nodes setup/nodes.yaml
 
 download-models: check-aria2 ## Download AI models (checkpoints, VAE, etc.)
-	@echo "$(GREEN)Downloading models...$(NC)"
-	@aria2c -x 10 --disable-ipv6 --input-file setup/models.txt --dir $(DATA_DIR)/models --continue
-	@echo "$(GREEN)Models downloaded!$(NC)"
+	@$(PYTHON) setup/download_models.py $(DATA_DIR)/models setup/models.yaml
 
 download-all: download-nodes download-models ## Download everything (nodes + models)
 	@echo "$(GREEN)All downloads complete!$(NC)"
@@ -133,18 +163,18 @@ add-node: ## Add a custom node to download list (interactive)
 	@$(PYTHON) setup/add_node.py
 
 list-models: ## List all models in download config
-	@echo "$(GREEN)Models in setup/models.txt:$(NC)"
-	@grep "out=" setup/models.txt | sed 's/.*out=/  /' | sort
+	@echo "$(GREEN)Models in setup/models.yaml:$(NC)"
+	@$(PYTHON) -c "import yaml; config=yaml.safe_load(open('setup/models.yaml')); [print(f'  {folder}/{m[\"name\"]}') for folder, models in config.items() for m in models if isinstance(m, dict)]"
 
 list-nodes: ## List all custom nodes in download config
-	@echo "$(GREEN)Custom nodes in setup/nodes.txt:$(NC)"
-	@grep -v "^#" setup/nodes.txt | grep -v "^$$" | sed 's|.*/||' | sed 's|\.git||' | sort
+	@echo "$(GREEN)Custom nodes in setup/nodes.yaml:$(NC)"
+	@$(PYTHON) -c "import yaml; config=yaml.safe_load(open('setup/nodes.yaml')); [print(f'  [{cat}] {url.split(\"/\")[-1]}') for cat, urls in config.items() for url in urls if isinstance(urls, list)]"
 
 # ============================================================================
 # RUNNING COMFYUI
 # ============================================================================
 
-run: ## Start ComfyUI (GPU)
+run: ## Start ComfyUI (GPU, auto-detect)
 	@echo "$(GREEN)Starting ComfyUI on port $(PORT)...$(NC)"
 	@cd $(COMFY_DIR) && ../.venv/bin/python main.py \
 		--listen 0.0.0.0 \
@@ -159,6 +189,15 @@ run-cpu: ## Start ComfyUI (CPU only)
 		--cpu \
 		--extra-model-paths-config extra_model_paths.yaml
 
+run-fp32: ## Start ComfyUI with FP32 (fixes vGPU/compatibility issues)
+	@echo "$(GREEN)Starting ComfyUI with FP32 precision...$(NC)"
+	@echo "$(YELLOW)Using 32-bit precision for better GPU compatibility$(NC)"
+	@cd $(COMFY_DIR) && ../.venv/bin/python main.py \
+		--listen 0.0.0.0 \
+		--port $(PORT) \
+		--force-fp32 \
+		--extra-model-paths-config extra_model_paths.yaml
+
 run-lowvram: ## Start ComfyUI with low VRAM mode
 	@echo "$(GREEN)Starting ComfyUI in low VRAM mode...$(NC)"
 	@cd $(COMFY_DIR) && ../.venv/bin/python main.py \
@@ -167,12 +206,32 @@ run-lowvram: ## Start ComfyUI with low VRAM mode
 		--lowvram \
 		--extra-model-paths-config extra_model_paths.yaml
 
+run-lowvram-fp32: ## Start with low VRAM + FP32 (safest for problematic GPUs)
+	@echo "$(GREEN)Starting ComfyUI in low VRAM + FP32 mode...$(NC)"
+	@echo "$(YELLOW)Safest mode for GPUs with compatibility issues$(NC)"
+	@cd $(COMFY_DIR) && ../.venv/bin/python main.py \
+		--listen 0.0.0.0 \
+		--port $(PORT) \
+		--lowvram \
+		--force-fp32 \
+		--disable-cuda-malloc \
+		--extra-model-paths-config extra_model_paths.yaml
+
 run-highvram: ## Start ComfyUI with high VRAM mode (faster)
 	@echo "$(GREEN)Starting ComfyUI in high VRAM mode...$(NC)"
 	@cd $(COMFY_DIR) && ../.venv/bin/python main.py \
 		--listen 0.0.0.0 \
 		--port $(PORT) \
 		--highvram \
+		--extra-model-paths-config extra_model_paths.yaml
+
+run-debug: ## Start ComfyUI with debug options
+	@echo "$(GREEN)Starting ComfyUI in debug mode...$(NC)"
+	@cd $(COMFY_DIR) && CUDA_LAUNCH_BLOCKING=1 ../.venv/bin/python main.py \
+		--listen 0.0.0.0 \
+		--port $(PORT) \
+		--force-fp32 \
+		--verbose \
 		--extra-model-paths-config extra_model_paths.yaml
 
 # ============================================================================

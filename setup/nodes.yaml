@@ -1,0 +1,84 @@
+# ComfyUI Custom Nodes Configuration
+# Run 'make download-nodes' to download all nodes
+
+manager:
+  - https://github.com/ltdrdata/ComfyUI-Manager
+  - https://github.com/ltdrdata/ComfyUI-Impact-Pack
+  - https://github.com/ltdrdata/ComfyUI-Impact-Subpack
+
+utilities:
+  - https://github.com/pythongosssss/ComfyUI-Custom-Scripts
+  - https://github.com/rgthree/rgthree-comfy
+  - https://github.com/chrisgoringe/cg-use-everywhere
+  - https://github.com/chrisgoringe/cg-image-picker
+  - https://github.com/crystian/ComfyUI-Crystools
+  - https://github.com/crystian/ComfyUI-Crystools-save
+  - https://github.com/cubiq/ComfyUI_essentials
+  - https://github.com/kijai/ComfyUI-KJNodes
+  - https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes
+  - https://github.com/jags111/efficiency-nodes-comfyui
+  - https://github.com/yolain/ComfyUI-Easy-Use
+  - https://github.com/bash-j/mikey_nodes
+  - https://github.com/Derfuu/Derfuu_ComfyUI_ModdedNodes
+  - https://github.com/theUpsider/ComfyUI-Logic
+  - https://github.com/aria1th/ComfyUI-LogicUtils
+  - https://github.com/GHOSTLXH/ComfyUI-Counternodes
+  - https://github.com/daxcay/ComfyUI-JDCN
+  - https://github.com/GTSuya-Studio/ComfyUI-Gtsuya-Nodes
+  - https://github.com/TTPlanetPig/Comfyui_TTP_Toolset
+  - https://github.com/shadowcz007/comfyui-mixlab-nodes
+
+image_output:
+  - https://github.com/giriss/comfy-image-saver
+  - https://github.com/SLAPaper/ComfyUI-Image-Selector
+
+prompt_styling:
+  - https://github.com/twri/sdxl_prompt_styler
+  - https://github.com/shiimizu/ComfyUI_smZNodes
+  - https://github.com/florestefano1975/comfyui-portrait-master
+  - https://github.com/KoreTeknology/ComfyUI-Universal-Styler
+
+upscaling:
+  - https://github.com/ssitu/ComfyUI_UltimateSDUpscale
+  - https://github.com/yuvraj108c/ComfyUI_InvSR
+
+controlnet_depth:
+  - https://github.com/Fannovel16/comfyui_controlnet_aux
+  - https://github.com/kijai/ComfyUI-depth-fm
+  - https://github.com/kijai/ComfyUI-Geowizard
+  - https://github.com/kijai/ComfyUI-Marigold
+  - https://github.com/risunobushi/ComfyUI_DisplacementMapTools
+
+face_portrait:
+  - https://github.com/cubiq/ComfyUI_InstantID
+  - https://github.com/cubiq/ComfyUI_IPAdapter_plus
+  - https://github.com/cubiq/ComfyUI_FaceAnalysis
+  - https://github.com/lldacing/ComfyUI_PuLID_Flux_ll
+  - https://github.com/sipie800/ComfyUI-PuLID-Flux-Enhanced
+  - https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait
+  - https://github.com/kijai/ComfyUI-LivePortraitKJ
+
+segmentation:
+  - https://github.com/storyicon/comfyui_segment_anything
+  - https://github.com/kijai/ComfyUI-segment-anything-2
+
+video_animation:
+  - https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
+  - https://github.com/Fannovel16/ComfyUI-Frame-Interpolation
+  - https://github.com/FizzleDorf/ComfyUI_FizzNodes
+  - https://github.com/AInseven/ComfyUI-fastblend
+  - https://github.com/MrForExample/ComfyUI-AnimateAnyone-Evolved
+
+vision_tagging:
+  - https://github.com/kijai/ComfyUI-Florence2
+  - https://github.com/pythongosssss/ComfyUI-WD14-Tagger
+
+advanced:
+  - https://github.com/huchenlei/ComfyUI-layerdiffuse
+  - https://github.com/mcmonkeyprojects/sd-dynamic-thresholding
+  - https://github.com/sipherxyz/comfyui-art-venture
+  - https://github.com/picturesonpictures/comfy_PoP
+  - https://github.com/melMass/comfy_mtb
+
+translation:
+  - https://github.com/AIGODLIKE/AIGODLIKE-ComfyUI-Translation

@@ -11,6 +11,7 @@ from pathlib import Path
 from urllib.parse import urlparse, unquote
 
 import structlog
+import yaml
 
 # Configure structlog for console output
 structlog.configure(
@@ -53,7 +54,7 @@ VALID_FOLDERS = [
     "liveportrait",
 ]
 
-CONFIG_FILE = Path("setup/models.txt")
+CONFIG_FILE = Path("setup/models.yaml")
 
 
 def extract_filename(url: str) -> str | None:
@@ -155,38 +156,53 @@ def interactive_mode():
 
 
 def add_model(url: str, folder: str, new_name: str = ""):
-    """Add a model to the config file."""
+    """Add a model to the YAML config file."""
     # Validate folder
     if folder not in VALID_FOLDERS:
         LOGGER.error("invalid_folder", folder=folder, valid_folders=VALID_FOLDERS)
         sys.exit(1)
 
-    # Determine output filename
+    # Determine filename
     if new_name:
-        output_path = f"{folder}/{new_name}"
+        filename = new_name
     else:
-        extracted_name = extract_filename(url)
-        if not extracted_name:
+        filename = extract_filename(url)
+        if not filename:
             LOGGER.error("filename_extraction_failed", url=url, hint="Please provide a filename")
             sys.exit(1)
-        output_path = f"{folder}/{extracted_name}"
 
-    # Check if already exists in config
+    # Load existing config
     if CONFIG_FILE.exists():
-        content = CONFIG_FILE.read_text()
-        if f"out={output_path}" in content:
-            LOGGER.warning("model_exists", output_path=output_path)
-            response = input("Add anyway? [y/N] ").strip().lower()
-            if response != "y":
-                LOGGER.info("cancelled")
-                sys.exit(0)
+        with open(CONFIG_FILE, "r") as f:
+            config = yaml.safe_load(f) or {}
+    else:
+        config = {}
 
-    # Add to config file
-    with open(CONFIG_FILE, "a") as f:
-        f.write(f"\n{url}\n")
-        f.write(f"  out={output_path}\n")
+    # Check if already exists
+    if folder in config:
+        for item in config[folder]:
+            if isinstance(item, dict) and item.get("name") == filename:
+                LOGGER.warning("model_exists", folder=folder, name=filename)
+                response = input("Add anyway? [y/N] ").strip().lower()
+                if response != "y":
+                    LOGGER.info("cancelled")
+                    sys.exit(0)
+                break
 
-    LOGGER.info("model_added", config_file=str(CONFIG_FILE), url=url, output=output_path)
+    # Add to config
+    if folder not in config:
+        config[folder] = []
+    
+    config[folder].append({
+        "url": url,
+        "name": filename,
+    })
+
+    # Write back
+    with open(CONFIG_FILE, "w") as f:
+        yaml.dump(config, f, default_flow_style=False, sort_keys=False)
+
+    LOGGER.info("model_added", config_file=str(CONFIG_FILE), folder=folder, name=filename)
     LOGGER.info("tip", message="Run 'make download-models' to download")
 
 

@@ -55,26 +55,28 @@ Run `make help` to see all available commands:
 
 | Command | Description |
 |---------|-------------|
-| `make setup` | Initial setup: venv, ComfyUI, dependencies |
-| `make install` | Install/reinstall Python dependencies |
-| `make install-cuda` | Install with CUDA support (cupy) |
+| `make setup` | Initial setup (auto-detects GPU, installs PyTorch) |
+| `make detect-gpu` | Detect GPU and show recommended PyTorch |
+| `make install-pytorch` | Auto-install PyTorch for your GPU |
+| `make install-pytorch-cuda124` | Install PyTorch with CUDA 12.4 |
+| `make install-pytorch-cuda118` | Install PyTorch with CUDA 11.8 |
+| `make install-pytorch-cpu` | Install PyTorch CPU-only |
 | `make download-nodes` | Download/update custom nodes |
 | `make download-models` | Download AI models |
 | `make download-all` | Download everything (nodes + models) |
-| `make add-model` | Add a new model to download list (interactive) |
+| `make add-model` | Add a new model (interactive) |
 | `make add-node` | Add a new custom node (interactive) |
-| `make list-models` | List all models in config |
-| `make list-nodes` | List all custom nodes in config |
-| `make run` | Start ComfyUI (GPU) |
+| `make run` | Start ComfyUI (GPU, auto-detect) |
 | `make run-cpu` | Start ComfyUI (CPU only) |
+| `make run-fp32` | Start with FP32 (fixes vGPU issues) |
 | `make run-lowvram` | Start with low VRAM mode |
+| `make run-lowvram-fp32` | Safest mode for problematic GPUs |
 | `make run-highvram` | Start with high VRAM mode (faster) |
+| `make run-debug` | Start with debug options |
 | `make update` | Update ComfyUI and custom nodes |
-| `make update-nodes` | Update only custom nodes |
 | `make install-node-deps` | Install custom node dependencies |
 | `make clean` | Clean cache files |
 | `make reset` | Full reset (keeps data) |
-| `make info` | Show environment info |
 | `make gpu-info` | Show GPU information |
 
 ## Directory Structure
@@ -86,10 +88,11 @@ Run `make help` to see all available commands:
 ├── pyproject.toml              # Python dependencies
 ├── extra_model_paths.yaml      # ComfyUI model paths config
 ├── setup/                      # Scripts and config files
-│   ├── models.txt              # Model download list
-│   ├── nodes.txt               # Custom nodes list
+│   ├── models.yaml             # Model download list (YAML)
+│   ├── nodes.yaml              # Custom nodes list (YAML)
 │   ├── add_model.py            # Script to add models
 │   ├── add_node.py             # Script to add nodes
+│   ├── download_models.py      # Script to download models
 │   └── download_nodes.py       # Script to download nodes
 ├── comfy/                      # ComfyUI installation (created by setup)
 └── data/                       # All persistent data (created by setup)
@@ -144,7 +147,7 @@ Run `make help` to see all available commands:
 - **Video**: Frame interpolation, video export
 - **Utilities**: Logic nodes, prompt styling, image saving
 
-See `setup/nodes.txt` for the full list.
+See `setup/nodes.yaml` for the full list.
 
 ## Adding Custom Models
 
@@ -159,11 +162,12 @@ This will prompt you for:
 3. **New filename** - Optional, leave empty to keep original name
 
 ### Manual
-Edit `setup/models.txt` directly:
+Edit `setup/models.yaml` directly:
 
-```
-https://example.com/model.safetensors
-  out=checkpoints/my_model.safetensors
+```yaml
+checkpoints:
+  - url: https://example.com/model.safetensors
+    name: my_model.safetensors
 ```
 
 Then run `make download-models`.
@@ -171,10 +175,10 @@ Then run `make download-models`.
 ### Via Script
 ```bash
 # Keep original filename
-python setup/add_model.py "https://example.com/model.safetensors" checkpoints
+uv run python setup/add_model.py "https://example.com/model.safetensors" checkpoints
 
 # With custom filename
-python setup/add_model.py "https://example.com/model.safetensors" loras "my_lora.safetensors"
+uv run python setup/add_model.py "https://example.com/model.safetensors" loras "my_lora.safetensors"
 ```
 
 ## Adding Custom Nodes
@@ -184,13 +188,14 @@ python setup/add_model.py "https://example.com/model.safetensors" loras "my_lora
 make add-node
 ```
 
-This will prompt you for the GitHub repository URL.
+This will prompt you for the GitHub repository URL and category.
 
 ### Manual
-Edit `setup/nodes.txt` and add the GitHub URL:
+Edit `setup/nodes.yaml` and add the GitHub URL:
 
-```
-https://github.com/username/ComfyUI-NodeName.git
+```yaml
+utilities:
+  - https://github.com/username/ComfyUI-NodeName
 ```
 
 Then run `make download-nodes`.
@@ -202,13 +207,33 @@ python setup/add_node.py "https://github.com/username/ComfyUI-NodeName"
 
 ## Troubleshooting
 
-### CUDA Not Available
+### CUDA Errors / GPU Issues
 ```bash
-# Check GPU status
-make gpu-info
+# Detect your GPU and check PyTorch compatibility
+make detect-gpu
 
-# Run in CPU mode
+# Try FP32 mode (fixes many vGPU and compatibility issues)
+make run-fp32
+
+# Safest mode for problematic GPUs
+make run-lowvram-fp32
+
+# Debug mode (shows detailed CUDA errors)
+make run-debug
+
+# Run in CPU mode as fallback
 make run-cpu
+```
+
+### Wrong PyTorch Version
+```bash
+# Auto-detect and reinstall correct PyTorch
+make install-pytorch
+
+# Or manually install specific CUDA version
+make install-pytorch-cuda124  # For CUDA 12.x drivers
+make install-pytorch-cuda118  # For CUDA 11.x drivers
+make install-pytorch-cpu      # CPU only
 ```
 
 ### Out of VRAM

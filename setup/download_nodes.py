@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 import structlog
+import yaml
 
 # Configure structlog for console output
 structlog.configure(
@@ -34,6 +35,10 @@ def extract_repo_name(url: str) -> str | None:
 
 def clone_or_pull(url: str, nodes_dir: Path) -> bool:
     """Clone a new repo or pull updates for existing one."""
+    # Normalize URL
+    if not url.endswith(".git"):
+        url = f"{url}.git"
+    
     repo_name = extract_repo_name(url)
     if not repo_name:
         LOGGER.error("invalid_url", url=url)
@@ -73,22 +78,23 @@ def clone_or_pull(url: str, nodes_dir: Path) -> bool:
     return True
 
 
-def load_repos_from_config(config_file: Path) -> list[str]:
-    """Load repository URLs from config file."""
-    repos = []
+def load_repos_from_yaml(config_file: Path) -> list[str]:
+    """Load repository URLs from YAML config file."""
     with open(config_file, "r") as f:
-        for line in f:
-            # Remove comments and whitespace
-            line = line.split("#")[0].strip()
-            if line:
-                repos.append(line)
+        config = yaml.safe_load(f)
+    
+    repos = []
+    for category, urls in config.items():
+        if isinstance(urls, list):
+            repos.extend(urls)
+    
     return repos
 
 
 def main():
     # Default paths
     nodes_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("data/custom_nodes")
-    config_file = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("setup/nodes.txt")
+    config_file = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("setup/nodes.yaml")
 
     # Convert to absolute paths
     nodes_dir = nodes_dir.resolve()
@@ -104,7 +110,7 @@ def main():
         sys.exit(1)
 
     # Load repositories
-    repos = load_repos_from_config(config_file)
+    repos = load_repos_from_yaml(config_file)
     LOGGER.info("repos_found", count=len(repos))
 
     # Process repositories

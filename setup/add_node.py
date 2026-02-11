@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 import structlog
+import yaml
 
 # Configure structlog for console output
 structlog.configure(
@@ -24,7 +25,24 @@ structlog.configure(
 
 LOGGER = structlog.get_logger()
 
-CONFIG_FILE = Path("setup/nodes.txt")
+CONFIG_FILE = Path("setup/nodes.yaml")
+
+# Valid categories for nodes
+VALID_CATEGORIES = [
+    "manager",
+    "utilities",
+    "image_output",
+    "prompt_styling",
+    "upscaling",
+    "controlnet_depth",
+    "face_portrait",
+    "segmentation",
+    "video_animation",
+    "vision_tagging",
+    "advanced",
+    "translation",
+    "other",
+]
 
 
 def print_box(lines: list[str]):
@@ -48,14 +66,14 @@ def extract_repo_name(url: str) -> str | None:
     return None
 
 
-def interactive_mode() -> str:
+def interactive_mode() -> tuple[str, str]:
     """Run in interactive mode with prompts."""
     print("\n\033[0;32mAdd Custom Node\033[0m")
     print("=" * 15)
     print()
     
     print_box([
-        "\033[0;33mGitHub Repository URL\033[0m",
+        "\033[0;33mSTEP 1: GitHub Repository URL\033[0m",
         "",
         "Paste the GitHub URL for the custom node repository.",
         "The .git extension is optional.",
@@ -63,7 +81,6 @@ def interactive_mode() -> str:
         "\033[0;33mExample inputs:\033[0m",
         "\033[0;32mhttps://github.com/ltdrdata/ComfyUI-Manager\033[0m",
         "\033[0;32mhttps://github.com/cubiq/ComfyUI_essentials.git\033[0m",
-        "\033[0;32mhttps://github.com/Kosinkadink/ComfyUI-VideoHelperSuite\033[0m",
     ])
     print()
     url = input("GitHub URL: ").strip()
@@ -72,46 +89,86 @@ def interactive_mode() -> str:
         LOGGER.error("validation_failed", reason="URL is required")
         sys.exit(1)
     
-    return url
+    print()
+    
+    print_box([
+        "\033[0;33mSTEP 2: Category\033[0m",
+        "",
+        "Which category does this node belong to?",
+        "",
+        "\033[0;33mOptions:\033[0m",
+        "  manager, utilities, image_output, prompt_styling,",
+        "  upscaling, controlnet_depth, face_portrait, segmentation,",
+        "  video_animation, vision_tagging, advanced, translation, other",
+        "",
+        "\033[0;33mExample input:\033[0m",
+        "\033[0;32mutilities\033[0m",
+    ])
+    print()
+    category = input("Category (default: other): ").strip() or "other"
+    
+    return url, category
 
 
-def add_node(url: str):
-    """Add a custom node to the config file."""
-    # Normalize URL (add .git if missing)
-    if not url.endswith(".git"):
-        url = f"{url}.git"
+def add_node(url: str, category: str = "other"):
+    """Add a custom node to the YAML config file."""
+    # Normalize URL (remove .git if present for consistency)
+    url = url.rstrip("/")
+    if url.endswith(".git"):
+        url = url[:-4]
 
     # Validate it looks like a GitHub URL
     if not url.startswith("https://github.com/") or url.count("/") < 4:
-        LOGGER.error("invalid_url", url=url, expected_format="https://github.com/username/repo-name.git")
+        LOGGER.error("invalid_url", url=url, expected_format="https://github.com/username/repo-name")
         sys.exit(1)
+
+    # Validate category
+    if category not in VALID_CATEGORIES:
+        LOGGER.warning("unknown_category", category=category, using="other")
+        category = "other"
 
     repo_name = extract_repo_name(url)
 
-    # Check if already exists in config
+    # Load existing config
     if CONFIG_FILE.exists():
-        content = CONFIG_FILE.read_text()
-        if url in content:
-            LOGGER.warning("node_exists", repo=repo_name)
-            sys.exit(0)
+        with open(CONFIG_FILE, "r") as f:
+            config = yaml.safe_load(f) or {}
+    else:
+        config = {}
 
-    # Add to config file
-    with open(CONFIG_FILE, "a") as f:
-        f.write(f"{url}\n")
+    # Check if already exists in any category
+    for cat, urls in config.items():
+        if isinstance(urls, list):
+            for existing_url in urls:
+                existing_normalized = existing_url.rstrip("/").rstrip(".git").replace(".git", "")
+                if existing_normalized == url:
+                    LOGGER.warning("node_exists", repo=repo_name, category=cat)
+                    sys.exit(0)
 
-    LOGGER.info("node_added", config_file=str(CONFIG_FILE), repo=repo_name, url=url)
+    # Add to config
+    if category not in config:
+        config[category] = []
+    
+    config[category].append(url)
+
+    # Write back
+    with open(CONFIG_FILE, "w") as f:
+        yaml.dump(config, f, default_flow_style=False, sort_keys=False)
+
+    LOGGER.info("node_added", config_file=str(CONFIG_FILE), repo=repo_name, category=category)
     LOGGER.info("tip", message="Run 'make download-nodes' to download")
 
 
 def main():
     if len(sys.argv) < 2:
         # Interactive mode
-        url = interactive_mode()
-        add_node(url)
+        url, category = interactive_mode()
+        add_node(url, category)
     else:
         # Direct mode
         url = sys.argv[1]
-        add_node(url)
+        category = sys.argv[2] if len(sys.argv) > 2 else "other"
+        add_node(url, category)
 
 
 if __name__ == "__main__":
