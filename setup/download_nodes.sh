@@ -13,8 +13,14 @@ YELLOW='\033[0;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
+# Convert to absolute paths
+NODES_DIR="$(cd "$(dirname "$NODES_DIR")" 2>/dev/null && pwd)/$(basename "$NODES_DIR")" || NODES_DIR="$(pwd)/${1:-data/custom_nodes}"
+
 # Create directory if it doesn't exist
 mkdir -p "$NODES_DIR"
+
+# Now get the real absolute path
+NODES_DIR="$(cd "$NODES_DIR" && pwd)"
 
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}Downloading/Updating Custom Nodes${NC}"
@@ -38,14 +44,14 @@ function clone_or_pull() {
         return 1
     fi
     
-    cd "$NODES_DIR"
+    local target_dir="$NODES_DIR/$repo_name"
     
-    if [ -d "$repo_name" ]; then
+    if [ -d "$target_dir" ]; then
         echo -e "${YELLOW}Updating ${repo_name}...${NC}"
-        git -C "$repo_name" pull --ff-only 2>/dev/null || echo -e "${YELLOW}  (already up to date or conflict)${NC}"
+        git -C "$target_dir" pull --ff-only 2>/dev/null || echo -e "${YELLOW}  (already up to date or conflict)${NC}"
     else
         echo -e "${GREEN}Cloning ${repo_name}...${NC}"
-        git clone --depth=1 --no-tags --recurse-submodules --shallow-submodules "$url" 2>/dev/null || {
+        git clone --depth=1 --no-tags --recurse-submodules --shallow-submodules "$url" "$target_dir" 2>/dev/null || {
             echo -e "${RED}  Failed to clone $repo_name${NC}"
             return 1
         }
