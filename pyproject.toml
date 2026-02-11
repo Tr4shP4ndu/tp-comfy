@@ -109,7 +109,7 @@ dependencies = [
     "pymupdf",
     "pypdf2",
     "reportlab",
-    "svglib",
+    # "svglib",  # Requires system cairo library
     
     # Git & GitHub
     "gitpython",
