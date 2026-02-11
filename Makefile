@@ -10,6 +10,9 @@ COMFY_DIR := comfy
 DATA_DIR := data
 PORT := 7860
 
+# Python via UV (ensures correct version and dependencies)
+PYTHON := uv run python
+
 # Colors for output
 GREEN := \033[0;32m
 YELLOW := \033[0;33m
@@ -109,7 +112,7 @@ sync: check-uv ## Sync dependencies (fast update)
 
 download-nodes: ## Download/update custom nodes
 	@echo "$(GREEN)Downloading custom nodes...$(NC)"
-	@python setup/download_nodes.py $(DATA_DIR)/custom_nodes setup/nodes.txt
+	@$(PYTHON) setup/download_nodes.py $(DATA_DIR)/custom_nodes setup/nodes.txt
 
 download-models: check-aria2 ## Download AI models (checkpoints, VAE, etc.)
 	@echo "$(GREEN)Downloading models...$(NC)"
@@ -124,10 +127,10 @@ download-all: download-nodes download-models ## Download everything (nodes + mod
 # ============================================================================
 
 add-model: ## Add a model to download list (interactive)
-	@python setup/add_model.py
+	@$(PYTHON) setup/add_model.py
 
 add-node: ## Add a custom node to download list (interactive)
-	@python setup/add_node.py
+	@$(PYTHON) setup/add_node.py
 
 list-models: ## List all models in download config
 	@echo "$(GREEN)Models in setup/models.txt:$(NC)"
@@ -181,7 +184,7 @@ update: ## Update ComfyUI and custom nodes
 	@cd $(COMFY_DIR) && git pull --ff-only
 	
 	@echo "$(GREEN)Updating custom nodes...$(NC)"
-	@python setup/download_nodes.py $(DATA_DIR)/custom_nodes
+	@$(PYTHON) setup/download_nodes.py $(DATA_DIR)/custom_nodes
 	
 	@echo "$(GREEN)Updating dependencies...$(NC)"
 	@uv pip install -r $(COMFY_DIR)/requirements.txt
@@ -191,7 +194,7 @@ update: ## Update ComfyUI and custom nodes
 
 update-nodes: ## Update only custom nodes
 	@echo "$(GREEN)Updating custom nodes...$(NC)"
-	@python setup/download_nodes.py $(DATA_DIR)/custom_nodes
+	@$(PYTHON) setup/download_nodes.py $(DATA_DIR)/custom_nodes
 
 install-node-deps: ## Install dependencies for all custom nodes
 	@echo "$(GREEN)Installing custom node dependencies...$(NC)"

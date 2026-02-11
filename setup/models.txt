@@ -44,7 +44,7 @@ https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-ms
 https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/vae/diffusion_pytorch_model.safetensors
   out=vae/diffusion_pytorch_model.safetensors
 
-https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/ae.safetensors
+https://huggingface.co/frankjoshua/FLUX.1-dev/resolve/main/ae.safetensors
   out=vae/ae.safetensors
 
 # VAE Approx (for previews)
@@ -237,3 +237,5 @@ https://civitai.green/api/download/models/152309?type=Model&format=SafeTensor
 
 https://civitai.green/api/download/models/221966?type=Model&format=SafeTensor
   out=loras/EpicCanvas-Genesis-V1.safetensors
+
+
