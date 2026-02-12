@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Detect GPU and recommend PyTorch installation.
-Usage: python detect_gpu.py [--install]
+Usage: python detect_gpu.py [--install] [--check] [--nightly]
 """
 
 import subprocess
@@ -24,10 +24,14 @@ structlog.configure(
 
 LOGGER = structlog.get_logger()
 
+# Available PyTorch CUDA versions (stable releases)
+AVAILABLE_CUDA_VERSIONS = ["cu118", "cu121", "cu124", "cu126", "cu128"]
+
 # PyTorch CUDA version mappings (driver CUDA version -> recommended PyTorch CUDA)
+# Always map to the highest available PyTorch CUDA that's <= driver CUDA
 CUDA_PYTORCH_MAP = {
-    "13": "cu124",  # CUDA 13.x drivers work best with PyTorch CUDA 12.4
-    "12": "cu124",  # CUDA 12.x
+    "13": "cu128",  # CUDA 13.x - use cu128 (closest available, backwards compatible)
+    "12": "cu128",  # CUDA 12.x - use cu128 (latest 12.x)
     "11": "cu118",  # CUDA 11.x
 }
 
@@ -104,7 +108,37 @@ def detect_amd_gpu() -> dict | None:
     }
 
 
-def get_pytorch_install_command(gpu_info: dict | None) -> tuple[str, list[str]]:
+def get_installed_pytorch_info() -> dict | None:
+    """Check currently installed PyTorch version and CUDA support."""
+    try:
+        result = subprocess.run(
+            [sys.executable, "-c", """
+import torch
+print(f"version:{torch.__version__}")
+print(f"cuda_available:{torch.cuda.is_available()}")
+print(f"cuda_version:{torch.version.cuda if torch.cuda.is_available() else 'N/A'}")
+if torch.cuda.is_available():
+    print(f"device_name:{torch.cuda.get_device_name(0)}")
+    print(f"device_count:{torch.cuda.device_count()}")
+"""],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        if result.returncode != 0:
+            return None
+        
+        info = {}
+        for line in result.stdout.strip().split("\n"):
+            if ":" in line:
+                key, value = line.split(":", 1)
+                info[key] = value
+        return info
+    except Exception:
+        return None
+
+
+def get_pytorch_install_command(gpu_info: dict | None, use_nightly: bool = False) -> tuple[str, list[str]]:
     """Get the recommended PyTorch installation command."""
     if gpu_info is None:
         return "cpu", [
@@ -115,7 +149,15 @@ def get_pytorch_install_command(gpu_info: dict | None) -> tuple[str, list[str]]:
     
     if gpu_info["type"] == "nvidia":
         cuda_major = gpu_info.get("cuda_version", "12").split(".")[0]
-        pytorch_cuda = CUDA_PYTORCH_MAP.get(cuda_major, "cu124")
+        pytorch_cuda = CUDA_PYTORCH_MAP.get(cuda_major, "cu128")
+        
+        if use_nightly:
+            # Nightly builds may have newer CUDA support
+            return f"cuda-nightly ({pytorch_cuda})", [
+                "uv", "pip", "install", "--pre",
+                "torch", "torchvision", "torchaudio",
+                "--index-url", f"https://download.pytorch.org/whl/nightly/{pytorch_cuda}"
+            ]
         
         return f"cuda ({pytorch_cuda})", [
             "uv", "pip", "install",
@@ -145,7 +187,29 @@ def get_pytorch_install_command(gpu_info: dict | None) -> tuple[str, list[str]]:
 
 def main():
     install_mode = "--install" in sys.argv
+    check_mode = "--check" in sys.argv
+    use_nightly = "--nightly" in sys.argv
     
+    print()
+    print("=" * 60)
+    print("GPU & PyTorch Detection")
+    print("=" * 60)
+    
+    # Check currently installed PyTorch
+    pytorch_info = get_installed_pytorch_info()
+    if pytorch_info:
+        print()
+        print("Currently installed PyTorch:")
+        print(f"  Version:      {pytorch_info.get('version', 'unknown')}")
+        print(f"  CUDA enabled: {pytorch_info.get('cuda_available', 'unknown')}")
+        print(f"  CUDA version: {pytorch_info.get('cuda_version', 'N/A')}")
+        if pytorch_info.get('device_name'):
+            print(f"  GPU device:   {pytorch_info.get('device_name')}")
+    else:
+        print()
+        print("Currently installed PyTorch: Not found")
+    
+    # Detect GPU
     LOGGER.info("detecting_gpu")
     
     # Try NVIDIA first
@@ -160,16 +224,41 @@ def main():
         gpu_info = detect_amd_gpu()
     
     # Report findings
+    print()
     if gpu_info is None:
-        LOGGER.warning("no_gpu_detected", fallback="CPU mode")
+        print("Detected GPU: None (will use CPU)")
     else:
+        print(f"Detected GPU: {gpu_info.get('name', 'Unknown')}")
+        if gpu_info.get("type") == "nvidia":
+            print(f"  Driver:       {gpu_info.get('driver', 'unknown')}")
+            print(f"  CUDA version: {gpu_info.get('cuda_version', 'unknown')}")
+            print(f"  Memory:       {gpu_info.get('memory', 'unknown')}")
         LOGGER.info("gpu_detected", **gpu_info)
     
     # Get install command
-    backend, install_cmd = get_pytorch_install_command(gpu_info)
-    LOGGER.info("recommended_pytorch", backend=backend)
+    backend, install_cmd = get_pytorch_install_command(gpu_info, use_nightly=use_nightly)
+    
+    print()
+    print(f"Recommended PyTorch: {backend}")
+    print(f"Available CUDA versions: {', '.join(AVAILABLE_CUDA_VERSIONS)}")
+    
+    # Show compatibility note for CUDA 13
+    if gpu_info and gpu_info.get("cuda_version", "").startswith("13"):
+        print()
+        print("NOTE: Your driver supports CUDA 13.x, but PyTorch stable releases")
+        print("      currently max out at cu128. This is backwards compatible -")
+        print("      cu128 will work with CUDA 13.x drivers.")
+        print()
+        print("      If you need native CUDA 13 support, try: make install-pytorch-nightly")
+    
+    if check_mode:
+        # Just check, don't install
+        print()
+        print("=" * 60)
+        return
     
     if install_mode:
+        print()
         LOGGER.info("installing_pytorch", command=" ".join(install_cmd))
         result = subprocess.run(install_cmd)
         if result.returncode == 0:
@@ -182,7 +271,16 @@ def main():
         print("To install PyTorch, run:")
         print(f"  {' '.join(install_cmd)}")
         print()
-        print("Or use: make install-pytorch")
+        print("Or use one of these make commands:")
+        print("  make install-pytorch          # Auto-detect and install")
+        print("  make install-pytorch-nightly  # Install nightly (may have newer CUDA)")
+        print("  make install-pytorch-cu128    # Force CUDA 12.8")
+        print("  make install-pytorch-cu124    # Force CUDA 12.4")
+        print("  make install-pytorch-cu118    # Force CUDA 11.8")
+        print("  make install-pytorch-cpu      # CPU only")
+    
+    print()
+    print("=" * 60)
     
     # Output for Makefile parsing
     if "--output-backend" in sys.argv:

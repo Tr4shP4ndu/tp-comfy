@@ -78,6 +78,19 @@ setup: check-uv ## Initial setup: create venv, clone ComfyUI, install deps
 		cd $(COMFY_DIR) && git pull --ff-only || true; \
 	fi
 	
+	@# Create symlinks for input/output folders
+	@echo "$(GREEN)Setting up input/output folder links...$(NC)"
+	@# comfy/input -> data/input (data/input is the parent)
+	@rm -rf $(COMFY_DIR)/input 2>/dev/null || true
+	@ln -sf ../$(DATA_DIR)/input $(COMFY_DIR)/input
+	@# data/output -> comfy/output (comfy/output is the parent)
+	@rm -rf $(DATA_DIR)/output 2>/dev/null || true
+	@mkdir -p $(COMFY_DIR)/output
+	@ln -sf ../$(COMFY_DIR)/output $(DATA_DIR)/output
+	@# comfy/custom_nodes -> data/custom_nodes
+	@rm -rf $(COMFY_DIR)/custom_nodes 2>/dev/null || true
+	@ln -sf ../$(DATA_DIR)/custom_nodes $(COMFY_DIR)/custom_nodes
+	
 	@# Create virtual environment and install dependencies
 	@echo "$(GREEN)Creating virtual environment with UV...$(NC)"
 	@uv venv --python $(PYTHON_VERSION)
@@ -120,11 +133,26 @@ install-pytorch: ## Auto-detect GPU and install correct PyTorch
 	@echo "$(GREEN)Installing PyTorch for your GPU...$(NC)"
 	@$(PYTHON) setup/detect_gpu.py --install
 
-install-pytorch-cuda124: ## Install PyTorch with CUDA 12.4
+check-pytorch: ## Check current PyTorch installation and GPU detection
+	@$(PYTHON) setup/detect_gpu.py --check
+
+install-pytorch-nightly: ## Install PyTorch nightly (latest CUDA support)
+	@echo "$(GREEN)Installing PyTorch nightly...$(NC)"
+	@$(PYTHON) setup/detect_gpu.py --install --nightly
+
+install-pytorch-cu128: ## Install PyTorch with CUDA 12.8
+	@echo "$(GREEN)Installing PyTorch with CUDA 12.8...$(NC)"
+	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+
+install-pytorch-cu126: ## Install PyTorch with CUDA 12.6
+	@echo "$(GREEN)Installing PyTorch with CUDA 12.6...$(NC)"
+	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+
+install-pytorch-cu124: ## Install PyTorch with CUDA 12.4
 	@echo "$(GREEN)Installing PyTorch with CUDA 12.4...$(NC)"
 	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 
-install-pytorch-cuda118: ## Install PyTorch with CUDA 11.8
+install-pytorch-cu118: ## Install PyTorch with CUDA 11.8
 	@echo "$(GREEN)Installing PyTorch with CUDA 11.8...$(NC)"
 	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
@@ -237,6 +265,23 @@ run-debug: ## Start ComfyUI with debug options
 # ============================================================================
 # MAINTENANCE
 # ============================================================================
+
+fix-links: ## Fix/recreate symlinks for input, output, custom_nodes
+	@echo "$(GREEN)Fixing folder symlinks...$(NC)"
+	@# comfy/input -> data/input (data/input is the parent)
+	@rm -rf $(COMFY_DIR)/input 2>/dev/null || true
+	@ln -sf ../$(DATA_DIR)/input $(COMFY_DIR)/input
+	@echo "  ✓ $(COMFY_DIR)/input -> $(DATA_DIR)/input"
+	@# data/output -> comfy/output (comfy/output is the parent)
+	@rm -rf $(DATA_DIR)/output 2>/dev/null || true
+	@mkdir -p $(COMFY_DIR)/output
+	@ln -sf ../$(COMFY_DIR)/output $(DATA_DIR)/output
+	@echo "  ✓ $(DATA_DIR)/output -> $(COMFY_DIR)/output"
+	@# comfy/custom_nodes -> data/custom_nodes
+	@rm -rf $(COMFY_DIR)/custom_nodes 2>/dev/null || true
+	@ln -sf ../$(DATA_DIR)/custom_nodes $(COMFY_DIR)/custom_nodes
+	@echo "  ✓ $(COMFY_DIR)/custom_nodes -> $(DATA_DIR)/custom_nodes"
+	@echo "$(GREEN)Symlinks fixed!$(NC)"
 
 update: ## Update ComfyUI and custom nodes
 	@echo "$(GREEN)Updating ComfyUI...$(NC)"

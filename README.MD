@@ -57,9 +57,13 @@ Run `make help` to see all available commands:
 |---------|-------------|
 | `make setup` | Initial setup (auto-detects GPU, installs PyTorch) |
 | `make detect-gpu` | Detect GPU and show recommended PyTorch |
+| `make check-pytorch` | Check current PyTorch installation and GPU |
 | `make install-pytorch` | Auto-install PyTorch for your GPU |
-| `make install-pytorch-cuda124` | Install PyTorch with CUDA 12.4 |
-| `make install-pytorch-cuda118` | Install PyTorch with CUDA 11.8 |
+| `make install-pytorch-nightly` | Install PyTorch nightly (newest CUDA support) |
+| `make install-pytorch-cu128` | Install PyTorch with CUDA 12.8 |
+| `make install-pytorch-cu126` | Install PyTorch with CUDA 12.6 |
+| `make install-pytorch-cu124` | Install PyTorch with CUDA 12.4 |
+| `make install-pytorch-cu118` | Install PyTorch with CUDA 11.8 |
 | `make install-pytorch-cpu` | Install PyTorch CPU-only |
 | `make download-nodes` | Download/update custom nodes |
 | `make download-models` | Download AI models |
@@ -209,7 +213,10 @@ python setup/add_node.py "https://github.com/username/ComfyUI-NodeName"
 
 ### CUDA Errors / GPU Issues
 ```bash
-# Detect your GPU and check PyTorch compatibility
+# Check current PyTorch installation and GPU detection
+make check-pytorch
+
+# Detect your GPU and show recommended PyTorch version
 make detect-gpu
 
 # Try FP32 mode (fixes many vGPU and compatibility issues)
@@ -227,12 +234,20 @@ make run-cpu
 
 ### Wrong PyTorch Version
 ```bash
+# Check what's currently installed
+make check-pytorch
+
 # Auto-detect and reinstall correct PyTorch
 make install-pytorch
 
+# For CUDA 13.x drivers (newest), try nightly builds
+make install-pytorch-nightly
+
 # Or manually install specific CUDA version
-make install-pytorch-cuda124  # For CUDA 12.x drivers
-make install-pytorch-cuda118  # For CUDA 11.x drivers
+make install-pytorch-cu128    # For CUDA 12.8+ / 13.x drivers
+make install-pytorch-cu126    # For CUDA 12.6+ drivers  
+make install-pytorch-cu124    # For CUDA 12.x drivers
+make install-pytorch-cu118    # For CUDA 11.x drivers
 make install-pytorch-cpu      # CPU only
 ```
 
