@@ -141,28 +141,28 @@ install-pytorch-nightly: ## Install PyTorch nightly (latest CUDA support)
 	@$(PYTHON) setup/detect_gpu.py --install --nightly
 
 install-pytorch-cu130: ## Install PyTorch with CUDA 13.0
-	@echo "$(GREEN)Installing PyTorch with CUDA 13.0...$(NC)"
-	@uv pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu130
+	@printf "$(GREEN)Installing PyTorch with CUDA 13.0...$(NC)\n"
+	@uv pip install --reinstall torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu130
 
 install-pytorch-cu128: ## Install PyTorch with CUDA 12.8
-	@echo "$(GREEN)Installing PyTorch with CUDA 12.8...$(NC)"
-	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+	@printf "$(GREEN)Installing PyTorch with CUDA 12.8...$(NC)\n"
+	@uv pip install --reinstall torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 
 install-pytorch-cu126: ## Install PyTorch with CUDA 12.6
-	@echo "$(GREEN)Installing PyTorch with CUDA 12.6...$(NC)"
-	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+	@printf "$(GREEN)Installing PyTorch with CUDA 12.6...$(NC)\n"
+	@uv pip install --reinstall torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
 
 install-pytorch-cu124: ## Install PyTorch with CUDA 12.4
-	@echo "$(GREEN)Installing PyTorch with CUDA 12.4...$(NC)"
-	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+	@printf "$(GREEN)Installing PyTorch with CUDA 12.4...$(NC)\n"
+	@uv pip install --reinstall torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 
 install-pytorch-cu118: ## Install PyTorch with CUDA 11.8
-	@echo "$(GREEN)Installing PyTorch with CUDA 11.8...$(NC)"
-	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+	@printf "$(GREEN)Installing PyTorch with CUDA 11.8...$(NC)\n"
+	@uv pip install --reinstall torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 install-pytorch-cpu: ## Install PyTorch CPU-only
-	@echo "$(GREEN)Installing PyTorch (CPU only)...$(NC)"
-	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+	@printf "$(GREEN)Installing PyTorch (CPU only)...$(NC)\n"
+	@uv pip install --reinstall torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
 install-cuda: install ## Install with CUDA support (cupy)
 	@echo "$(GREEN)Installing CUDA dependencies...$(NC)"
