@@ -11,7 +11,8 @@ DATA_DIR := data
 PORT := 7860
 
 # Python via UV (ensures correct version and dependencies)
-PYTHON := uv run python
+# Use venv python directly to avoid uv run syncing and overwriting PyTorch
+PYTHON := .venv/bin/python
 
 # Colors for output
 GREEN := \033[0;32m

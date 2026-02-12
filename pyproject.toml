@@ -5,10 +5,11 @@ description = "ComfyUI workspace with custom nodes and models"
 readme = "README.MD"
 requires-python = ">=3.12,<3.14"
 dependencies = [
-    # Core ML frameworks
-    "torch>=2.4.0",
-    "torchvision",
-    "torchaudio",
+    # NOTE: torch, torchvision, torchaudio are NOT listed here!
+    # They must be installed separately with the correct CUDA version.
+    # Use: make install-pytorch (auto-detect) or make install-pytorch-cu130 (manual)
+    
+    # Core ML frameworks (torch-dependent)
     "torchdiffeq",
     "torchsde",
     "torchmetrics",
