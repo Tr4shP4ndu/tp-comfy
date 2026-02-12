@@ -140,6 +140,10 @@ install-pytorch-nightly: ## Install PyTorch nightly (latest CUDA support)
 	@echo "$(GREEN)Installing PyTorch nightly...$(NC)"
 	@$(PYTHON) setup/detect_gpu.py --install --nightly
 
+install-pytorch-cu130: ## Install PyTorch with CUDA 13.0
+	@echo "$(GREEN)Installing PyTorch with CUDA 13.0...$(NC)"
+	@uv pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu130
+
 install-pytorch-cu128: ## Install PyTorch with CUDA 12.8
 	@echo "$(GREEN)Installing PyTorch with CUDA 12.8...$(NC)"
 	@uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128

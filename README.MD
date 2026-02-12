@@ -60,6 +60,7 @@ Run `make help` to see all available commands:
 | `make check-pytorch` | Check current PyTorch installation and GPU |
 | `make install-pytorch` | Auto-install PyTorch for your GPU |
 | `make install-pytorch-nightly` | Install PyTorch nightly (newest CUDA support) |
+| `make install-pytorch-cu130` | Install PyTorch with CUDA 13.0 |
 | `make install-pytorch-cu128` | Install PyTorch with CUDA 12.8 |
 | `make install-pytorch-cu126` | Install PyTorch with CUDA 12.6 |
 | `make install-pytorch-cu124` | Install PyTorch with CUDA 12.4 |
@@ -240,11 +241,9 @@ make check-pytorch
 # Auto-detect and reinstall correct PyTorch
 make install-pytorch
 
-# For CUDA 13.x drivers (newest), try nightly builds
-make install-pytorch-nightly
-
 # Or manually install specific CUDA version
-make install-pytorch-cu128    # For CUDA 12.8+ / 13.x drivers
+make install-pytorch-cu130    # For CUDA 13.x drivers
+make install-pytorch-cu128    # For CUDA 12.8+ drivers
 make install-pytorch-cu126    # For CUDA 12.6+ drivers  
 make install-pytorch-cu124    # For CUDA 12.x drivers
 make install-pytorch-cu118    # For CUDA 11.x drivers
