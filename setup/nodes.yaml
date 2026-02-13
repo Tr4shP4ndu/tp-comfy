@@ -36,7 +36,6 @@ prompt_styling:
   - https://github.com/twri/sdxl_prompt_styler
   - https://github.com/shiimizu/ComfyUI_smZNodes
   - https://github.com/florestefano1975/comfyui-portrait-master
-  - https://github.com/KoreTeknology/ComfyUI-Universal-Styler
 
 upscaling:
   - https://github.com/ssitu/ComfyUI_UltimateSDUpscale
@@ -53,7 +52,6 @@ face_portrait:
   - https://github.com/cubiq/ComfyUI_InstantID
   - https://github.com/cubiq/ComfyUI_IPAdapter_plus
   - https://github.com/cubiq/ComfyUI_FaceAnalysis
-  - https://github.com/lldacing/ComfyUI_PuLID_Flux_ll
   - https://github.com/sipie800/ComfyUI-PuLID-Flux-Enhanced
   - https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait
   - https://github.com/kijai/ComfyUI-LivePortraitKJ
@@ -67,7 +65,6 @@ video_animation:
   - https://github.com/Fannovel16/ComfyUI-Frame-Interpolation
   - https://github.com/FizzleDorf/ComfyUI_FizzNodes
   - https://github.com/AInseven/ComfyUI-fastblend
-  - https://github.com/MrForExample/ComfyUI-AnimateAnyone-Evolved
 
 vision_tagging:
   - https://github.com/kijai/ComfyUI-Florence2
