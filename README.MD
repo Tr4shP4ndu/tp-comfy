@@ -154,6 +154,54 @@ Run `make help` to see all available commands:
 
 See `setup/nodes.yaml` for the full list.
 
+## LipSync Workflow (LTX-2.3 Dub-It)
+
+`LipSync - LTX-2.3 Dub-It.json` makes an actor in an existing clip say a new line: new lip movement and new audio, with the voice cloned from the clip. The new line is written in the prompt. Guidance notes for each step are inside the workflow.
+
+Its models (~50GB) and nodes are kept out of the default downloads:
+
+```bash
+# 1. Accept the license at https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-DubIt
+# 2. Create a read token at https://huggingface.co/settings/tokens
+export HF_TOKEN=hf_...
+make lipsync-setup     # updates ComfyUI core, downloads nodes + models, installs deps, adds the workflow
+make run               # leave running, open http://localhost:7860
+make lipsync-check     # in a second terminal: GPU, nodes, models, and what the server sees
+```
+
+### Testing from the terminal
+
+`make lipsync-test` queues the workflow through the ComfyUI API, waits, and prints the output path. It needs the API version of the workflow once: in ComfyUI open the LipSync workflow, then **Workflow → Export (API)**, and save it in the repo root as `LipSync - LTX-2.3 Dub-It (API).json`.
+
+```bash
+make lipsync-test CLIP=~/clips/actor.mp4 \
+  PROMPT='A man at a desk, looking at the camera, speaking in English saying: "We ship on Friday, no excuses."'
+```
+
+| Option | Default | Meaning |
+|---|---|---|
+| `CLIP` | required | Video of one person speaking, face visible |
+| `PROMPT` | the workflow's | Shot description + `speaking in <language> saying: "<new line>"` |
+| `TRIM` | `5` | Keep the first N seconds (`0` = whole clip) |
+| `PRESET` | `32gb` | Size preset: `32gb` (960×544 → 1920×1088), `24gb` (768×448 → 1536×896), `preview` (640×352 → 1280×704) |
+| `SEED` | the workflow's | Change for another take |
+
+Requires an NVIDIA GPU, 32GB+ VRAM recommended. See `setup/models-lipsync.yaml` and `setup/nodes-lipsync.yaml`.
+
+### Using it from another computer
+
+`make run` listens on the network, so the GPU machine can stay headless:
+
+- **Browser:** open `http://<gpu-machine-ip>:7860`. LoadVideo's upload button sends a clip from your computer; right-click the output video → Save to download it.
+- **Terminal:** add `COMFY_URL` to the check and test targets. The clip is uploaded, and results are saved to `~/Downloads` (change with `OUT=`). Only `uv` is needed on that computer, no `make setup`.
+
+```bash
+make lipsync-check COMFY_URL=http://192.168.1.50:7860
+make lipsync-test  COMFY_URL=http://192.168.1.50:7860 CLIP=~/clips/actor.mp4 PROMPT='...'
+```
+
+ComfyUI has no login: anyone who can reach port 7860 can use it. Keep it on your home network, or use [Tailscale](https://tailscale.com) or an SSH tunnel (`ssh -L 7860:localhost:7860 you@gpu-machine`, then `http://localhost:7860`) from outside.
+
 ## Adding Custom Models
 
 ### Interactive (Recommended)

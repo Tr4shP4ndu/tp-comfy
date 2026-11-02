@@ -1,0 +1,24 @@
+# LipSync (LTX-2.3 Dub-It) models, ~50 GB total
+# Used by: "LipSync - LTX-2.3 Dub-It.json"
+# Run 'make download-lipsync' (needs HF_TOKEN, see README: the Dub-It LoRA is gated)
+
+checkpoints:
+- url: https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-dev-fp8.safetensors
+  name: ltx-2.3-22b-dev-fp8.safetensors
+# Full bf16 checkpoint (46 GB). If you use it, switch all three loaders in STEP 1 of the workflow.
+# - url: https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-22b-dev.safetensors
+#   name: ltx-2.3-22b-dev.safetensors
+loras:
+- url: https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-22b-distilled-lora-384-1.1.safetensors
+  name: ltx-2.3-22b-distilled-lora-384-1.1.safetensors
+- url: https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-DubIt/resolve/main/ltx-2.3-22b-ic-lora-dubit-0.9.safetensors
+  name: ltx-2.3-22b-ic-lora-dubit-0.9.safetensors
+latent_upscale_models:
+- url: https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x2-1.1.safetensors
+  name: ltx-2.3-spatial-upscaler-x2-1.1.safetensors
+text_encoders:
+- url: https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors
+  name: gemma_3_12B_it_fp4_mixed.safetensors
+# Alternative if fp4 misbehaves on older GPUs (13 GB)
+# - url: https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp8_scaled.safetensors
+#   name: gemma_3_12B_it_fp8_scaled.safetensors

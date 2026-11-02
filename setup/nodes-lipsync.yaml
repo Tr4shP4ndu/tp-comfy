@@ -1,0 +1,7 @@
+# LipSync (LTX-2.3 Dub-It) custom nodes
+# Run 'make download-lipsync', then 'make install-node-deps'
+
+lipsync:
+  - https://github.com/Lightricks/ComfyUI-LTXVideo
+  - https://github.com/kijai/ComfyUI-KJNodes
+  - https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite

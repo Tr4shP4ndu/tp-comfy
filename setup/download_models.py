@@ -4,6 +4,7 @@ Download ComfyUI models using aria2c
 Usage: python download_models.py [models_directory] [config_file]
 """
 
+import os
 import subprocess
 import sys
 import tempfile
@@ -47,11 +48,15 @@ def load_models_from_yaml(config_file: Path) -> list[dict]:
 
 def generate_aria2_input(models: list[dict]) -> str:
     """Generate aria2c input file content from models list."""
+    # Gated Hugging Face repos need a token from an account that accepted the license
+    hf_token = os.environ.get("HF_TOKEN")
     lines = []
     for model in models:
         lines.append(model["url"])
         output_path = f"{model['folder']}/{model['name']}" if model.get("name") else model["folder"]
         lines.append(f"  out={output_path}")
+        if hf_token and "huggingface.co" in model["url"]:
+            lines.append(f"  header=Authorization: Bearer {hf_token}")
     return "\n".join(lines)
 
 

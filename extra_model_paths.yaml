@@ -39,3 +39,5 @@ comfy:
   mmdets: models/mmdets
   onnx: models/onnx
   liveportrait: models/liveportrait
+  text_encoders: models/text_encoders
+  latent_upscale_models: models/latent_upscale_models

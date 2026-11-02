@@ -1,7 +1,8 @@
 # ComfyUI Workspace Makefile
 # Uses UV for fast Python package management
 
-.PHONY: help setup install sync download-models download-nodes download-all run run-cpu update clean reset
+.PHONY: help setup install sync download-models download-nodes download-lipsync download-all run run-cpu update clean reset \
+	lipsync-setup lipsync-check lipsync-test
 
 # Configuration
 PYTHON_VERSION := 3.12
@@ -50,6 +51,7 @@ check-aria2: ## Check if aria2c is installed
 		echo "  macOS: brew install aria2"; \
 		echo "  Ubuntu: sudo apt install aria2"; \
 		echo "  Fedora: sudo dnf install aria2"; \
+		echo "  Arch/Manjaro: sudo pacman -S aria2"; \
 		exit 1; \
 	fi
 
@@ -67,6 +69,7 @@ setup: check-uv ## Initial setup: create venv, clone ComfyUI, install deps
 	@mkdir -p $(DATA_DIR)/models/{diffusers,diffusion_models,embeddings,gligen,hypernetworks}
 	@mkdir -p $(DATA_DIR)/models/{loras,photomaker,style_models,unet,upscale_models,vae,vae_approx}
 	@mkdir -p $(DATA_DIR)/models/{sam2,mmdets,onnx,liveportrait}
+	@mkdir -p $(DATA_DIR)/models/{text_encoders,latent_upscale_models}
 	@mkdir -p $(DATA_DIR)/models/ultralytics/{bbox,segm}
 	@mkdir -p $(DATA_DIR)/custom_nodes
 	
@@ -182,8 +185,72 @@ download-nodes: ## Download/update custom nodes
 download-models: check-aria2 ## Download AI models (checkpoints, VAE, etc.)
 	@$(PYTHON) setup/download_models.py $(DATA_DIR)/models setup/models.yaml
 
+download-lipsync: check-aria2 ## Download LipSync (LTX-2.3 Dub-It) nodes + models (~50GB, needs HF_TOKEN)
+	@$(PYTHON) setup/download_nodes.py $(DATA_DIR)/custom_nodes setup/nodes-lipsync.yaml
+	@$(PYTHON) setup/download_models.py $(DATA_DIR)/models setup/models-lipsync.yaml
+
 download-all: download-nodes download-models ## Download everything (nodes + models)
 	@echo "$(GREEN)All downloads complete!$(NC)"
+
+# ============================================================================
+# LIPSYNC (LTX-2.3 Dub-It)
+# ============================================================================
+# 1. make lipsync-setup   - everything the workflow needs (run once, after 'make setup')
+# 2. make run             - start ComfyUI (leave it running)
+# 3. make lipsync-check   - preflight: GPU, nodes, models, and what the server sees
+# 4. make lipsync-test CLIP=~/clip.mp4 PROMPT='... speaking in English saying: "..."'
+#
+# lipsync-test options: TRIM=5 (seconds to keep, 0 = full clip), PRESET=32gb|24gb|preview, SEED=<n>
+# Remote GPU box: add COMFY_URL=http://<ip>:7860 to check/test; results download to OUT (default ~/Downloads)
+
+LIPSYNC_WORKFLOW := LipSync - LTX-2.3 Dub-It.json
+LIPSYNC_NODES := ComfyUI-LTXVideo ComfyUI-KJNodes ComfyUI-VideoHelperSuite
+TRIM ?= 5
+PRESET ?= 32gb
+# Point at another machine to run from here, e.g. COMFY_URL=http://192.168.1.50:7860
+COMFY_URL ?= http://127.0.0.1:$(PORT)
+# The full .venv is only needed on the GPU machine; elsewhere uv fetches the two packages the script uses
+LIPSYNC_PY := $(if $(wildcard $(PYTHON)),$(PYTHON),uv run --no-project --with pyyaml --with structlog python)
+
+lipsync-setup: check-aria2 ## LipSync: update core, download nodes + models (~50GB), install deps, add workflow
+	@if [ -z "$$HF_TOKEN" ]; then \
+		echo "$(RED)✗ HF_TOKEN is not set.$(NC) The Dub-It LoRA is gated:"; \
+		echo "  1. Accept the license at https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-DubIt"; \
+		echo "  2. Create a read token at https://huggingface.co/settings/tokens"; \
+		echo "  3. export HF_TOKEN=hf_... and run this again"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)Updating ComfyUI core (LTXV audio/video nodes live there)...$(NC)"
+	@cd $(COMFY_DIR) && git pull --ff-only
+	@uv pip install -r $(COMFY_DIR)/requirements.txt
+	@mkdir -p $(DATA_DIR)/models/{text_encoders,latent_upscale_models} $(DATA_DIR)/input
+	@cp extra_model_paths.yaml $(COMFY_DIR)/extra_model_paths.yaml
+	@$(MAKE) --no-print-directory download-lipsync
+	@echo "$(GREEN)Installing LipSync node dependencies...$(NC)"
+	@for node in $(LIPSYNC_NODES); do \
+		if [ -f "$(DATA_DIR)/custom_nodes/$$node/requirements.txt" ]; then \
+			echo "Installing deps for $$node..."; \
+			uv pip install -r "$(DATA_DIR)/custom_nodes/$$node/requirements.txt"; \
+		fi \
+	done
+	@# Show the workflow in ComfyUI's Workflows sidebar
+	@mkdir -p $(COMFY_DIR)/user/default/workflows
+	@cp "$(LIPSYNC_WORKFLOW)" "$(COMFY_DIR)/user/default/workflows/"
+	@echo ""
+	@echo "$(GREEN)LipSync ready!$(NC) Next: make run, then make lipsync-check"
+
+lipsync-check: ## LipSync: preflight check (GPU, nodes, models; server too if running)
+	@$(LIPSYNC_PY) setup/lipsync.py --url $(COMFY_URL) check
+
+lipsync-test: ## LipSync: run the workflow on a clip: CLIP=file PROMPT='...' [TRIM=5 PRESET=32gb SEED=n]
+	@if [ -z "$$CLIP" ]; then \
+		echo "$(RED)✗ CLIP is required.$(NC) Example:"; \
+		echo "  make lipsync-test CLIP=~/clips/actor.mp4 PROMPT='A man at a desk, looking at the camera, speaking in English saying: \"Hello there.\"'"; \
+		exit 1; \
+	fi
+	@$(LIPSYNC_PY) setup/lipsync.py --url $(COMFY_URL) test \
+		--clip "$$CLIP" --prompt "$$PROMPT" --seconds $(TRIM) --preset $(PRESET) \
+		$(if $(SEED),--seed $(SEED)) $(if $(OUT),--out "$(OUT)")
 
 # ============================================================================
 # ADD MODELS & NODES
