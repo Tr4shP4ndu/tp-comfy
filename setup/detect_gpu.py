@@ -64,10 +64,15 @@ def detect_nvidia_gpu() -> dict | None:
     code, stdout, _ = run_command(["nvidia-smi"])
     cuda_version = None
     if code == 0:
-        match = re.search(r"CUDA Version:\s*(\d+\.\d+)", stdout)
+        match = re.search(r"CUDA(?: Driver)? Version:\s*(\d+\.\d+)", stdout)
         if match:
             cuda_version = match.group(1)
-    
+    if cuda_version is None:
+        # Newer drivers may not print it: infer from the driver (580+ = CUDA 13, 525+ = CUDA 12)
+        driver_major = int(parts[1].strip().split(".")[0])
+        cuda_version = "13.0" if driver_major >= 580 else "12.0" if driver_major >= 525 else "11.8"
+        LOGGER.info("cuda_version_inferred", driver=parts[1].strip(), cuda_version=cuda_version)
+
     return {
         "type": "nvidia",
         "name": parts[0].strip(),
@@ -148,7 +153,7 @@ def get_pytorch_install_command(gpu_info: dict | None, use_nightly: bool = False
         ]
     
     if gpu_info["type"] == "nvidia":
-        cuda_major = gpu_info.get("cuda_version", "12").split(".")[0]
+        cuda_major = (gpu_info.get("cuda_version") or "12").split(".")[0]
         pytorch_cuda = CUDA_PYTORCH_MAP.get(cuda_major, "cu128")
         
         if use_nightly:
@@ -253,7 +258,7 @@ def main():
     # Show note if installed PyTorch doesn't match recommended
     if pytorch_info and gpu_info:
         installed_cuda = pytorch_info.get("cuda_version", "N/A")
-        driver_cuda = gpu_info.get("cuda_version", "")
+        driver_cuda = gpu_info.get("cuda_version") or ""
         if driver_cuda.startswith("13") and not installed_cuda.startswith("13"):
             print()
             print("NOTE: Your driver supports CUDA 13.x, but your PyTorch uses CUDA " + installed_cuda)
