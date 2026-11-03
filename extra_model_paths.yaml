@@ -41,3 +41,4 @@ comfy:
   liveportrait: models/liveportrait
   text_encoders: models/text_encoders
   latent_upscale_models: models/latent_upscale_models
+  detection: models/detection

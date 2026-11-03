@@ -22,3 +22,7 @@ text_encoders:
 # Alternative if fp4 misbehaves on older GPUs (13 GB)
 # - url: https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp8_scaled.safetensors
 #   name: gemma_3_12B_it_fp8_scaled.safetensors
+detection:
+# Face detector for the CROP TO FACE option (5 MB)
+- url: https://huggingface.co/Comfy-Org/mediapipe/resolve/main/detection/mediapipe_face_fp32.safetensors
+  name: mediapipe_face_fp32.safetensors

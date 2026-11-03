@@ -3,7 +3,7 @@
 Check and test the LipSync (LTX-2.3 Dub-It) workflow
 Usage:
   python lipsync.py check [--url URL]
-  python lipsync.py test --clip FILE [--prompt TEXT] [--seconds N] [--preset 32gb|24gb|preview] [--seed N] [--url URL]
+  python lipsync.py test --clip FILE [--prompt TEXT] [--audio FILE] [--crop] [--seconds N] [--preset 32gb|24gb|preview] [--seed N] [--url URL]
 """
 
 import argparse
@@ -46,11 +46,12 @@ REQUIRED_NODES = ["ComfyUI-LTXVideo", "ComfyUI-KJNodes"]
 # Frontend-only node types: they never reach the server
 FRONTEND_ONLY = {"MarkdownNote", "Note", "Reroute", "PrimitiveNode"}
 
-# s1 = low-res pass, s2 = high-res output (always 2x s1), 16:9
+# Pixel budget of the low-res pass (s1 width x height), written to the workflow's S1 PIXELS node.
+# The workflow fits s1 to the frames' shape (multiples of 32) and makes s2 = 2x s1. 16:9 sizes shown.
 PRESETS = {
-    "32gb": (960, 544),
-    "24gb": (768, 448),
-    "preview": (640, 352),
+    "32gb": 960 * 544,
+    "24gb": 768 * 448,
+    "preview": 640 * 352,
 }
 
 
@@ -233,8 +234,7 @@ def report(problems: int) -> int:
 # TEST
 # ============================================================================
 
-def trim_clip(src: Path, dst: Path, seconds: float) -> None:
-    """Cut the first N seconds (keeps audio). Falls back to a plain copy without ffmpeg."""
+def find_ffmpeg() -> str | None:
     ffmpeg = shutil.which("ffmpeg")
     if not ffmpeg:
         try:
@@ -242,19 +242,33 @@ def trim_clip(src: Path, dst: Path, seconds: float) -> None:
             ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
         except ImportError:
             pass
-    if not ffmpeg or seconds <= 0:
+    return ffmpeg
+
+
+# ComfyUI holds decoded frames as float32 (12 bytes/pixel), next to ~40 GB of offloaded model weights on a 24 GB GPU.
+# A 4804x1830 clip is ~105 MB per frame, so cap frames at 4 MP: still ~2x the largest s2 size the presets use.
+MAX_FRAME_PIXELS = 4_000_000
+
+
+def trim_clip(src: Path, dst: Path, seconds: float) -> None:
+    """Re-encode to a small H.264 mp4 (any input codec, e.g. ProRes), keeping the first N seconds (0 = all)
+    and scaling frames down to MAX_FRAME_PIXELS. Falls back to a plain copy without ffmpeg."""
+    ffmpeg = find_ffmpeg()
+    if not ffmpeg:
         shutil.copy(src, dst)
         return
+    duration = ["-t", str(seconds)] if seconds > 0 else []
+    fit = f"scale=w='trunc(iw*min(1,sqrt({MAX_FRAME_PIXELS}/(iw*ih)))/2)*2':h=-2"
     subprocess.run(
-        [ffmpeg, "-y", "-loglevel", "error", "-i", str(src), "-t", str(seconds),
-         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", str(dst)],
+        [ffmpeg, "-y", "-loglevel", "error", "-i", str(src), *duration, "-vf", fit,
+         "-c:v", "libx264", "-crf", "16", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", str(dst)],
         check=True,
     )
 
 
-def patch_workflow(prompt: dict, clip_name: str, text: str | None, preset: str, seed: int | None) -> None:
-    s1 = PRESETS[preset]
-    s2 = (s1[0] * 2, s1[1] * 2)
+def patch_workflow(prompt: dict, clip_name: str, text: str | None, pixels: int, crop: bool, seed: int | None) -> bool:
+    """Fill in the clip, prompt, seed, size budget and crop toggle. False if the workflow predates auto size / crop."""
+    found = set()
     for node in prompt.values():
         node_type = node["class_type"]
         title = node.get("_meta", {}).get("title", "")
@@ -265,18 +279,35 @@ def patch_workflow(prompt: dict, clip_name: str, text: str | None, preset: str, 
             inputs["text"] = text
         elif node_type == "RandomNoise" and seed is not None:
             inputs["noise_seed"] = seed
-        elif node_type in ("ResizeImageMaskNode", "EmptyLTXVLatentVideo"):
-            width, height = s2 if "s2" in title else s1
-            for key in inputs:
-                if key.endswith("width") and not isinstance(inputs[key], list):
-                    inputs[key] = width
-                elif key.endswith("height") and not isinstance(inputs[key], list):
-                    inputs[key] = height
+        elif title == "S1 PIXELS (size preset)":
+            inputs["value"] = pixels
+            found.add("pixels")
+        elif title == "CROP TO FACE":
+            inputs["value"] = crop
+            found.add("crop")
+    return found == {"pixels", "crop"}
 
 
-def test(url: str, clip: Path, text: str | None, seconds: float, preset: str, seed: int | None, out_dir: Path) -> int:
+def set_audio_mode(prompt: dict, audio_name: str | None, clip_name: str) -> bool:
+    """Flip the USE RECORDED AUDIO toggle and point Load Recorded Audio at the upload. False if the workflow lacks them.
+    In text mode the loader still gets a real file (the clip): ComfyUI validates the switched-off branch too."""
+    toggle = next((n for n in prompt.values() if n["class_type"] == "PrimitiveBoolean"
+                   and n.get("_meta", {}).get("title") == "USE RECORDED AUDIO"), None)
+    loader = next((n for n in prompt.values() if n["class_type"] == "LoadAudio"), None)
+    if toggle is None or loader is None:
+        return audio_name is None
+    toggle["inputs"]["value"] = audio_name is not None
+    loader["inputs"]["audio"] = audio_name or clip_name
+    return True
+
+
+def test(url: str, clip: Path, text: str | None, seconds: float, preset: str, seed: int | None, out_dir: Path,
+         audio: Path | None = None, crop: bool = False) -> int:
     if not clip.exists():
         LOGGER.error("clip_not_found", clip=str(clip))
+        return 1
+    if audio and not audio.exists():
+        LOGGER.error("audio_not_found", audio=str(audio))
         return 1
     if not WORKFLOW_API.exists():
         LOGGER.error(
@@ -300,7 +331,19 @@ def test(url: str, clip: Path, text: str | None, seconds: float, preset: str, se
         clip_name = upload_file(url, trimmed, trimmed.name)
     LOGGER.info("clip_uploaded", file=f"input/{clip_name}", seconds=seconds or "full")
 
-    patch_workflow(prompt, clip_name, text, preset, seed)
+    if not patch_workflow(prompt, clip_name, text, PRESETS[preset], crop, seed):
+        LOGGER.error("workflow_outdated", file=WORKFLOW_API.name,
+                     hint="re-export it (Export (API)) from the updated workflow that has S1 PIXELS and CROP TO FACE")
+        return 1
+    LOGGER.info("settings", preset=preset, s1_pixels=PRESETS[preset], crop_to_face=crop)
+
+    # Recorded audio mode: the recording is kept as the soundtrack and only the lips are regenerated
+    audio_name = upload_file(url, audio, f"lipsync_test_{audio.name}") if audio else None
+    if not set_audio_mode(prompt, audio_name, clip_name):
+        LOGGER.error("no_audio_mode", file=WORKFLOW_API.name,
+                     hint="re-export it (Export (API)) from the updated workflow that has STEP 2b")
+        return 1
+    LOGGER.info("mode", mode="recorded audio" if audio else "text", audio=audio_name)
 
     # Queue
     try:
@@ -337,7 +380,7 @@ def test(url: str, clip: Path, text: str | None, seconds: float, preset: str, se
     files = [
         item for output in history.get("outputs", {}).values()
         for items in output.values() if isinstance(items, list)
-        for item in items if isinstance(item, dict) and "filename" in item
+        for item in items if isinstance(item, dict) and "filename" in item and item.get("type") == "output"
     ]
     for item in files:
         if is_local(url):
@@ -360,12 +403,16 @@ def main():
     t.add_argument("--preset", choices=PRESETS, default="32gb")
     t.add_argument("--seed", type=int)
     t.add_argument("--out", type=Path, default=Path.home() / "Downloads", help="Where to save results from a remote server")
+    t.add_argument("--audio", type=Path, help="Recorded audio to lip-sync to (kept as the soundtrack)")
+    t.add_argument("--crop", action="store_true", help="Track and crop to the face (output is the face crop)")
     args = parser.parse_args()
 
     url = args.url.rstrip("/")
     if args.command == "check":
         sys.exit(check(url))
-    sys.exit(test(url, args.clip.expanduser().resolve(), args.prompt, args.seconds, args.preset, args.seed, args.out.expanduser()))
+    audio = args.audio.expanduser().resolve() if args.audio else None
+    sys.exit(test(url, args.clip.expanduser().resolve(), args.prompt, args.seconds, args.preset, args.seed,
+                  args.out.expanduser(), audio, args.crop))
 
 
 if __name__ == "__main__":

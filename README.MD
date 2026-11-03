@@ -165,7 +165,7 @@ Its models (~50GB) and nodes are kept out of the default downloads:
 # 2. Create a read token at https://huggingface.co/settings/tokens
 export HF_TOKEN=hf_...
 make lipsync-setup     # updates ComfyUI core, downloads nodes + models, installs deps, adds the workflow
-make run               # leave running, open http://localhost:7860
+make run-lipsync       # leave running, open http://localhost:7860 (keeps 16GB RAM free for video frames)
 make lipsync-check     # in a second terminal: GPU, nodes, models, and what the server sees
 ```
 
@@ -185,6 +185,24 @@ make lipsync-test CLIP=~/clips/actor.mp4 \
 | `TRIM` | `5` | Keep the first N seconds (`0` = whole clip) |
 | `PRESET` | `32gb` | Size preset: `32gb` (960×544 → 1920×1088), `24gb` (768×448 → 1536×896), `preview` (640×352 → 1280×704) |
 | `SEED` | the workflow's | Change for another take |
+| `AUDIO` | none | Recorded audio mode: keep this recording as the soundtrack and regenerate only the lips to match it |
+| `CROP` | off | `CROP=1` tracks the face and dubs a crop around it. For wide shots; the output is the crop |
+
+Sizes follow the clip's shape automatically (any aspect ratio, or the face crop); the preset only sets the pixel budget. Clips are re-encoded to H.264 and capped at 4 MP per frame before upload, because ComfyUI holds frames as 32-bit floats in system RAM.
+
+### Two modes
+
+The workflow has a **USE RECORDED AUDIO** toggle in STEP 2b and a **CROP TO FACE** toggle in STEP 2c (with **FACE ZOOM** and **TRACKING SMOOTHING**). Crop needs `models/detection/mediapipe_face_fp32.safetensors`, which `make lipsync-setup` downloads.
+
+USE RECORDED AUDIO:
+
+- **Text (default):** write the new line in the prompt. New speech is generated in a voice cloned from the clip.
+- **Recorded audio:** upload a recording in **Load Recorded Audio**. It's trimmed to the clip length and kept as the soundtrack, and the model only re-animates the lips. Still put the transcript in the prompt. This mode is experimental: Dub-It was built for text mode.
+
+```bash
+make lipsync-test COMFY_URL=http://192.168.1.50:7860 CLIP=~/clips/actor.mov AUDIO=~/clips/actor_vo.wav \
+  PROMPT='A man at a desk, looking at the camera, speaking in English saying: "<the words in the recording>"'
+```
 
 Requires an NVIDIA GPU, 32GB+ VRAM recommended. See `setup/models-lipsync.yaml` and `setup/nodes-lipsync.yaml`.
 

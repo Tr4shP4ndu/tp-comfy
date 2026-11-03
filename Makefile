@@ -69,7 +69,7 @@ setup: check-uv ## Initial setup: create venv, clone ComfyUI, install deps
 	@mkdir -p $(DATA_DIR)/models/{diffusers,diffusion_models,embeddings,gligen,hypernetworks}
 	@mkdir -p $(DATA_DIR)/models/{loras,photomaker,style_models,unet,upscale_models,vae,vae_approx}
 	@mkdir -p $(DATA_DIR)/models/{sam2,mmdets,onnx,liveportrait}
-	@mkdir -p $(DATA_DIR)/models/{text_encoders,latent_upscale_models}
+	@mkdir -p $(DATA_DIR)/models/{text_encoders,latent_upscale_models,detection}
 	@mkdir -p $(DATA_DIR)/models/ultralytics/{bbox,segm}
 	@mkdir -p $(DATA_DIR)/custom_nodes
 	
@@ -196,11 +196,13 @@ download-all: download-nodes download-models ## Download everything (nodes + mod
 # LIPSYNC (LTX-2.3 Dub-It)
 # ============================================================================
 # 1. make lipsync-setup   - everything the workflow needs (run once, after 'make setup')
-# 2. make run             - start ComfyUI (leave it running)
+# 2. make run-lipsync     - start ComfyUI with RAM headroom for video (leave it running)
 # 3. make lipsync-check   - preflight: GPU, nodes, models, and what the server sees
 # 4. make lipsync-test CLIP=~/clip.mp4 PROMPT='... speaking in English saying: "..."'
 #
 # lipsync-test options: TRIM=5 (seconds to keep, 0 = full clip), PRESET=32gb|24gb|preview, SEED=<n>
+# Recorded audio mode: AUDIO=~/voice.wav keeps that recording as the soundtrack and re-animates the lips to it
+# Face crop: CROP=1 tracks the face and dubs a crop around it (for wide shots; the output is the crop)
 # Remote GPU box: add COMFY_URL=http://<ip>:7860 to check/test; results download to OUT (default ~/Downloads)
 
 LIPSYNC_WORKFLOW := LipSync - LTX-2.3 Dub-It.json
@@ -223,7 +225,7 @@ lipsync-setup: check-aria2 ## LipSync: update core, download nodes + models (~50
 	@echo "$(GREEN)Updating ComfyUI core (LTXV audio/video nodes live there)...$(NC)"
 	@cd $(COMFY_DIR) && git pull --ff-only
 	@uv pip install -r $(COMFY_DIR)/requirements.txt
-	@mkdir -p $(DATA_DIR)/models/{text_encoders,latent_upscale_models} $(DATA_DIR)/input
+	@mkdir -p $(DATA_DIR)/models/{text_encoders,latent_upscale_models,detection} $(DATA_DIR)/input
 	@cp extra_model_paths.yaml $(COMFY_DIR)/extra_model_paths.yaml
 	@$(MAKE) --no-print-directory download-lipsync
 	@echo "$(GREEN)Installing LipSync node dependencies...$(NC)"
@@ -236,13 +238,15 @@ lipsync-setup: check-aria2 ## LipSync: update core, download nodes + models (~50
 	@# Show the workflow in ComfyUI's Workflows sidebar
 	@mkdir -p $(COMFY_DIR)/user/default/workflows
 	@cp "$(LIPSYNC_WORKFLOW)" "$(COMFY_DIR)/user/default/workflows/"
+	@# Silent placeholder for Load Recorded Audio: ComfyUI validates it even in text mode
+	@$(PYTHON) -c "import wave; f = wave.open('$(DATA_DIR)/input/no_audio.wav', 'wb'); f.setnchannels(1); f.setsampwidth(2); f.setframerate(44100); f.writeframes(bytes(88200)); f.close()"
 	@echo ""
 	@echo "$(GREEN)LipSync ready!$(NC) Next: make run, then make lipsync-check"
 
 lipsync-check: ## LipSync: preflight check (GPU, nodes, models; server too if running)
 	@$(LIPSYNC_PY) setup/lipsync.py --url $(COMFY_URL) check
 
-lipsync-test: ## LipSync: run the workflow on a clip: CLIP=file PROMPT='...' [TRIM=5 PRESET=32gb SEED=n]
+lipsync-test: ## LipSync: run the workflow on a clip: CLIP=file PROMPT='...' [AUDIO=file CROP=1 TRIM=5 PRESET=32gb SEED=n]
 	@if [ -z "$$CLIP" ]; then \
 		echo "$(RED)✗ CLIP is required.$(NC) Example:"; \
 		echo "  make lipsync-test CLIP=~/clips/actor.mp4 PROMPT='A man at a desk, looking at the camera, speaking in English saying: \"Hello there.\"'"; \
@@ -250,7 +254,7 @@ lipsync-test: ## LipSync: run the workflow on a clip: CLIP=file PROMPT='...' [TR
 	fi
 	@$(LIPSYNC_PY) setup/lipsync.py --url $(COMFY_URL) test \
 		--clip "$$CLIP" --prompt "$$PROMPT" --seconds $(TRIM) --preset $(PRESET) \
-		$(if $(SEED),--seed $(SEED)) $(if $(OUT),--out "$(OUT)")
+		$(if $(SEED),--seed $(SEED)) $(if $(OUT),--out "$(OUT)") $(if $(AUDIO),--audio "$$AUDIO") $(if $(filter 1 yes true,$(CROP)),--crop)
 
 # ============================================================================
 # ADD MODELS & NODES
@@ -304,6 +308,14 @@ run-lowvram: ## Start ComfyUI with low VRAM mode
 		--listen 0.0.0.0 \
 		--port $(PORT) \
 		--lowvram \
+		--extra-model-paths-config extra_model_paths.yaml
+
+run-lipsync: ## Start ComfyUI for LipSync: cache keeps 16GB RAM free for video frames (default is ~10%)
+	@echo "$(GREEN)Starting ComfyUI for LipSync on port $(PORT)...$(NC)"
+	@cd $(COMFY_DIR) && ../.venv/bin/python main.py \
+		--listen 0.0.0.0 \
+		--port $(PORT) \
+		--cache-ram 16 \
 		--extra-model-paths-config extra_model_paths.yaml
 
 run-lowvram-fp32: ## Start with low VRAM + FP32 (safest for problematic GPUs)

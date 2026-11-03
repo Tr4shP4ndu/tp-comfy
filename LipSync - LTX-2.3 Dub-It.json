@@ -1,8 +1,8 @@
 {
   "id": "394ed254-7306-42a2-9ae6-aa880ce4456d",
   "revision": 0,
-  "last_node_id": 5035,
-  "last_link_id": 13511,
+  "last_node_id": 5072,
+  "last_link_id": 13578,
   "nodes": [
     {
       "id": 2612,
@@ -280,7 +280,7 @@
           "name": "audio",
           "shape": 7,
           "type": "AUDIO",
-          "link": 13108
+          "link": 13527
         },
         {
           "name": "fps",
@@ -538,7 +538,7 @@
           "name": "Latent",
           "type": "LATENT",
           "links": [
-            12457
+            13521
           ]
         }
       ],
@@ -576,7 +576,7 @@
         {
           "name": "audio_latent",
           "type": "LATENT",
-          "link": 12457
+          "link": 13523
         }
       ],
       "outputs": [
@@ -675,7 +675,23 @@
         {
           "name": "input",
           "type": "IMAGE,MASK",
-          "link": 13472
+          "link": 13552
+        },
+        {
+          "name": "resize_type.width",
+          "type": "INT",
+          "widget": {
+            "name": "resize_type.width"
+          },
+          "link": 13553
+        },
+        {
+          "name": "resize_type.height",
+          "type": "INT",
+          "widget": {
+            "name": "resize_type.height"
+          },
+          "link": 13554
         }
       ],
       "outputs": [
@@ -1214,7 +1230,7 @@
           "name": "Audio",
           "type": "AUDIO",
           "links": [
-            13108
+            13525
           ]
         }
       ],
@@ -1388,7 +1404,7 @@
         {
           "name": "audio",
           "type": "AUDIO",
-          "link": 13470
+          "link": 13519
         },
         {
           "label": "Audio VAE",
@@ -1602,15 +1618,19 @@
           "name": "images",
           "type": "IMAGE",
           "links": [
-            13442,
-            13472
+            13529,
+            13533,
+            13538,
+            13557,
+            13562,
+            13568
           ]
         },
         {
           "name": "audio",
           "type": "AUDIO",
           "links": [
-            13470
+            13517
           ]
         },
         {
@@ -1619,7 +1639,11 @@
           "links": [
             13505,
             13506,
-            13507
+            13507,
+            13513,
+            13565,
+            13567,
+            13578
           ]
         }
       ],
@@ -1648,7 +1672,23 @@
         {
           "name": "input",
           "type": "IMAGE,MASK",
-          "link": 13442
+          "link": 13549
+        },
+        {
+          "name": "resize_type.width",
+          "type": "INT",
+          "widget": {
+            "name": "resize_type.width"
+          },
+          "link": 13550
+        },
+        {
+          "name": "resize_type.height",
+          "type": "INT",
+          "widget": {
+            "name": "resize_type.height"
+          },
+          "link": 13551
         }
       ],
       "outputs": [
@@ -1706,7 +1746,9 @@
           "name": "image",
           "type": "IMAGE",
           "links": [
-            13420
+            13420,
+            13571,
+            13574
           ]
         }
       ],
@@ -1867,6 +1909,22 @@
             "name": "length"
           },
           "link": 13510
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "widget": {
+            "name": "width"
+          },
+          "link": 13555
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "widget": {
+            "name": "height"
+          },
+          "link": 13556
         }
       ],
       "outputs": [
@@ -2104,7 +2162,9 @@
           "type": "INT",
           "links": [
             13510,
-            13511
+            13511,
+            13512,
+            13569
           ]
         }
       ],
@@ -2166,7 +2226,9 @@
         {
           "name": "frozen_audio",
           "type": "LATENT",
-          "links": null
+          "links": [
+            13522
+          ]
         }
       ],
       "properties": {
@@ -2251,7 +2313,7 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "# 🎬 LipSync Template · LTX-2.3 Dub-It\n\n**What it does:** takes a clip of an actor speaking and makes them say a *new line*.\nNew lip movement **and** new audio are generated; the actor's voice is cloned from the clip's original audio.\n\n> ⚠️ Dub-It is driven by **text in the prompt**, not by an external audio file.\n> For \"sync to my recorded VO\", see the note in STEP 4.\n\n---\n\n## ✅ Checklist before first run\n\n1. **Custom nodes** (Manager → Install Custom Nodes):\n   - `ComfyUI-LTXVideo` (Lightricks), **required**\n   - `ComfyUI-KJNodes` (kijai): `GetImageSizeAndCount`\n   - ComfyUI core must be **recent** (LTXV audio/video nodes are core)\n2. **Models**, exact names and folders:\n\n| File | models/ folder |\n|---|---|\n| `ltx-2.3-22b-dev-fp8.safetensors` (29 GB) | `checkpoints` |\n| `ltx-2.3-22b-distilled-lora-384-1.1.safetensors` (7.6 GB) | `loras` |\n| `ltx-2.3-22b-ic-lora-dubit-0.9.safetensors` (2.5 GB, **gated**) | `loras` |\n| `ltx-2.3-spatial-upscaler-x2-1.1.safetensors` (1 GB) | `latent_upscale_models` |\n| `gemma_3_12B_it_fp4_mixed.safetensors` (9.5 GB) | `text_encoders` |\n\n3. **Hardware:** NVIDIA, 32 GB+ VRAM recommended (24 GB: lower the s1/s2 sizes and add decode tiles). Won't run on a Mac.\n4. Put your clip in ComfyUI `input/` and select it in **STEP 2**.\n5. Write the new line in **STEP 3**, then **Queue**.\n\n## 🔁 Run order\nSTEP 1 → 7 left to right. You normally only touch **STEP 2** (clip), **STEP 3** (prompt), and maybe the sizes in **STEP 2/6**.\n"
+        "# 🎬 LipSync Template · LTX-2.3 Dub-It\n\n**What it does:** takes a clip of an actor speaking and makes them say a *new line*.\nNew lip movement **and** new audio are generated; the actor's voice is cloned from the clip's original audio.\n\n> Two modes, toggled in **STEP 2b**:\n> - **Text** (default): write the new line in the prompt; the voice is cloned from the clip.\n> - **Recorded audio**: your recording is kept as-is and only the lips are regenerated to match it.\n\n---\n\n## ✅ Checklist before first run\n\n1. **Custom nodes** (Manager → Install Custom Nodes):\n   - `ComfyUI-LTXVideo` (Lightricks), **required**\n   - `ComfyUI-KJNodes` (kijai): `GetImageSizeAndCount`\n   - ComfyUI core must be **recent** (LTXV audio/video nodes are core)\n2. **Models**, exact names and folders:\n\n| File | models/ folder |\n|---|---|\n| `ltx-2.3-22b-dev-fp8.safetensors` (29 GB) | `checkpoints` |\n| `ltx-2.3-22b-distilled-lora-384-1.1.safetensors` (7.6 GB) | `loras` |\n| `ltx-2.3-22b-ic-lora-dubit-0.9.safetensors` (2.5 GB, **gated**) | `loras` |\n| `ltx-2.3-spatial-upscaler-x2-1.1.safetensors` (1 GB) | `latent_upscale_models` |\n| `gemma_3_12B_it_fp4_mixed.safetensors` (9.5 GB) | `text_encoders` |\n\n3. **Hardware:** NVIDIA, 32 GB+ VRAM recommended (24 GB: set **S1 PIXELS** to 344064 and add decode tiles). Won't run on a Mac.\n4. Put your clip in ComfyUI `input/` and select it in **STEP 2**.\n5. Write the new line in **STEP 3**, then **Queue**.\n\n## 🔁 Run order\nSTEP 1 → 7 left to right. You normally only touch **STEP 2** (clip), **STEP 3** (prompt), and maybe **S1 PIXELS** (Auto size) or **CROP TO FACE** (STEP 2c).\n"
       ],
       "color": "#233",
       "bgcolor": "#355"
@@ -2297,7 +2359,7 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "## STEP 2 · Actor clip: what works best\n- **One speaker**, face clearly visible, mouth not covered. Near-frontal is best.\n- **Steady camera / shot**. Cut long footage into single shots of **~3–8 s** first (VRAM grows with length).\n- The clip's **own audio is the voice reference**, so give it clean dialogue (no music bed).\n- Frame count is snapped automatically to LTX's `8n+1` (e.g. 121 = 5 s @ 24 fps). FPS is taken from the clip.\n- **s1 resize = 960×544 (16:9)**, and it *stretches*. For other aspect ratios set s1 (here) **and** `EmptyLTXVLatentVideo` (STEP 4) to the same size, multiples of 32 (e.g. 9:16 → 544×960).\n"
+        "## STEP 2 · Actor clip: what works best\n- **One speaker**, face clearly visible, mouth not covered. Near-frontal is best.\n- **Steady camera / shot**. Cut long footage into single shots of **~3–8 s** first (VRAM grows with length).\n- The clip's **own audio is the voice reference**, so give it clean dialogue (no music bed).\n- Frame count is snapped automatically to LTX's `8n+1` (e.g. 121 = 5 s @ 24 fps). FPS is taken from the clip.\n- Keep frames at **4 MP or less** (e.g. 3240×1234, 2560×1440): bigger clips can run out of system RAM.\n- **Sizes are automatic**: s1 follows the clip's shape (any aspect ratio) within the **S1 PIXELS** budget (Auto size group).\n"
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -2343,7 +2405,7 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "## STEP 4 · Preprocess (usually leave alone)\n- `LTXVAudioVAEEncode` → `LTXVSetAudioRefTokens`: original audio = **voice to clone**.\n- `LTXAddVideoICLoRAGuide`: original frames = **guide** (identity, motion, background).\n- `LTXVEmptyLatentAudio`: the **new** audio is generated from scratch.\n- `EmptyLTXVLatentVideo` width/height **must match s1** (STEP 2).\n\n**🎙 Want to sync to a recorded VO file instead?** That's the *modified* variant: encode your VO with `LTXVAudioVAEEncode` and use it in place of the empty audio latent, masked so it isn't regenerated. It's experimental and not covered by Lightricks' workflow, so test it in a copy of this graph.\n"
+        "## STEP 4 · Preprocess (usually leave alone)\n- `LTXVAudioVAEEncode` → `LTXVSetAudioRefTokens`: original audio = **voice to clone**.\n- `LTXAddVideoICLoRAGuide`: original frames = **guide** (identity, motion, background).\n- `LTXVEmptyLatentAudio`: the **new** audio is generated from scratch.\n- `EmptyLTXVLatentVideo` width/height come from s1 (Auto size).\n\n**🎙 Recorded audio mode** (STEP 2b on): **Switch A** feeds your recording to the encoder instead of the clip's audio, and **Switch B** swaps the empty audio latent for the *frozen* recording (`frozen_audio`, never denoised), so only the lips are generated.\n"
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -2389,7 +2451,7 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "## STEP 6 · High-res pass\n- Latent is upscaled **2×**, the guide is re-applied at **s2**, then refined in 3 steps.\n- **s2 must be exactly 2× s1** (960×544 → 1920×1088). Change both together.\n- **VRAM tight?** Use s1 = 768×448 / s2 = 1536×896, or s1 = 640×352 / s2 = 1280×704.\n- `LTXVCropGuides` removes the guide frames before decode. Leave it.\n"
+        "## STEP 6 · High-res pass\n- Latent is upscaled **2×**, the guide is re-applied at **s2**, then refined in 3 steps.\n- s2 is always exactly 2× s1 (Auto size).\n- **VRAM tight?** Lower **S1 PIXELS**: 344064 (24 GB) or 225280 (previews).\n- `LTXVCropGuides` removes the guide frames before decode. Leave it.\n"
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -2412,10 +2474,1724 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "## STEP 7 · Decode & save\n- Out of memory at the end? Raise the tile counts in `LTXVTiledVAEDecode` (e.g. 2×2 → 3×3 or 4×4).\n- Output is an MP4 with the new audio at the source FPS, in `output/`.\n- Need the original background audio back? Mix it in your editor: the model only outputs the new speech track.\n"
+        "## STEP 7 · Decode & save\n- Out of memory at the end? Raise the tile counts in `LTXVTiledVAEDecode` (e.g. 2×2 → 3×3 or 4×4).\n- Output is an MP4 with the new audio at the source FPS, in `output/`.\n- Recorded audio mode: **Switch C** puts your original recording on the MP4 instead of the decoded copy.\n- Need the original background audio back? Mix it in your editor: the model only outputs the new speech track.\n"
       ],
       "color": "#432",
       "bgcolor": "#653"
+    },
+    {
+      "id": 5040,
+      "type": "PrimitiveBoolean",
+      "pos": [
+        -4313,
+        4350
+      ],
+      "size": [
+        300,
+        58
+      ],
+      "flags": {},
+      "order": 57,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "BOOLEAN",
+          "type": "BOOLEAN",
+          "links": [
+            13516,
+            13520,
+            13524
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveBoolean",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        false
+      ],
+      "title": "USE RECORDED AUDIO",
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 5041,
+      "type": "LoadAudio",
+      "pos": [
+        -4313,
+        4440
+      ],
+      "size": [
+        300,
+        136
+      ],
+      "flags": {},
+      "order": 58,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            13514
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAudio",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "no_audio.wav",
+        null,
+        ""
+      ],
+      "title": "Load Recorded Audio"
+    },
+    {
+      "id": 5042,
+      "type": "ComfyMathExpression",
+      "pos": [
+        -3990,
+        4350
+      ],
+      "size": [
+        240,
+        128
+      ],
+      "flags": {},
+      "order": 59,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "a",
+          "name": "values.a",
+          "type": "FLOAT,INT",
+          "link": 13512
+        },
+        {
+          "label": "b",
+          "name": "values.b",
+          "type": "FLOAT,INT",
+          "link": 13513
+        },
+        {
+          "label": "c",
+          "name": "values.c",
+          "shape": 7,
+          "type": "FLOAT,INT",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            13515
+          ]
+        },
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "BOOL",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfyMathExpression",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "a / b"
+      ],
+      "title": "Clip seconds (frames / fps)"
+    },
+    {
+      "id": 5043,
+      "type": "TrimAudioDuration",
+      "pos": [
+        -3990,
+        4510
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 60,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 13514
+        },
+        {
+          "name": "duration",
+          "type": "FLOAT",
+          "widget": {
+            "name": "duration"
+          },
+          "link": 13515
+        }
+      ],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            13518
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TrimAudioDuration",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        0.0,
+        60.0
+      ],
+      "title": "Trim Recording To Clip"
+    },
+    {
+      "id": 5044,
+      "type": "ComfySwitchNode",
+      "pos": [
+        -2590,
+        3880
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 61,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "switch",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "switch"
+          },
+          "link": 13516
+        },
+        {
+          "name": "on_false",
+          "type": "*",
+          "link": 13517
+        },
+        {
+          "name": "on_true",
+          "type": "*",
+          "link": 13518
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": [
+            13519,
+            13526
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfySwitchNode",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        false
+      ],
+      "title": "Switch A · Audio source"
+    },
+    {
+      "id": 5045,
+      "type": "ComfySwitchNode",
+      "pos": [
+        -2280,
+        3880
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 62,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "switch",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "switch"
+          },
+          "link": 13520
+        },
+        {
+          "name": "on_false",
+          "type": "*",
+          "link": 13521
+        },
+        {
+          "name": "on_true",
+          "type": "*",
+          "link": 13522
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": [
+            13523
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfySwitchNode",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        false
+      ],
+      "title": "Switch B · Generate or freeze audio"
+    },
+    {
+      "id": 5046,
+      "type": "ComfySwitchNode",
+      "pos": [
+        934,
+        3520
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 63,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "switch",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "switch"
+          },
+          "link": 13524
+        },
+        {
+          "name": "on_false",
+          "type": "*",
+          "link": 13525
+        },
+        {
+          "name": "on_true",
+          "type": "*",
+          "link": 13526
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": [
+            13527,
+            13577
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfySwitchNode",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        false
+      ],
+      "title": "Switch C · Final soundtrack"
+    },
+    {
+      "id": 5047,
+      "type": "MarkdownNote",
+      "pos": [
+        -4950,
+        4290
+      ],
+      "size": [
+        600,
+        460
+      ],
+      "flags": {},
+      "order": 64,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MarkdownNote"
+      },
+      "widgets_values": [
+        "## STEP 2b · Recorded audio (optional)\n\nToggle **USE RECORDED AUDIO**:\n\n- **false** (default): *Text mode.* The line in STEP 3 is spoken in a new take, voice cloned from the clip.\n- **true**: *Audio mode.* Your recording is the soundtrack exactly as recorded. The model only regenerates the **lips** to match it.\n\n**Audio mode tips**\n- Upload the recording in **Load Recorded Audio** (wav, mp3, m4a, or a video file).\n- In text mode leave it on `no_audio.wav` (a silent placeholder from `make lipsync-setup`): ComfyUI checks this node even when it's switched off.\n- It's trimmed to the clip length from 0 s, so line it up with the clip before uploading.\n- Still write the **transcript** in the STEP 3 prompt (`speaking in English saying: \"...\"`). It helps the mouth shapes.\n- Clean speech, one speaker, no music.\n- Experimental: Lightricks built Dub-It for text mode. Check the sync on every take.\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 5048,
+      "type": "PrimitiveBoolean",
+      "pos": [
+        -4313.757170908322,
+        4700
+      ],
+      "size": [
+        300,
+        58
+      ],
+      "flags": {},
+      "order": 65,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "BOOLEAN",
+          "type": "BOOLEAN",
+          "links": [
+            13537,
+            13561,
+            13573
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveBoolean",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        false
+      ],
+      "title": "CROP TO FACE",
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 5060,
+      "type": "PrimitiveFloat",
+      "pos": [
+        -4313.757170908322,
+        4780
+      ],
+      "size": [
+        300,
+        58
+      ],
+      "flags": {},
+      "order": 66,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            13531
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveFloat",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        1.8
+      ],
+      "title": "FACE ZOOM"
+    },
+    {
+      "id": 5061,
+      "type": "PrimitiveFloat",
+      "pos": [
+        -4313.757170908322,
+        4860
+      ],
+      "size": [
+        300,
+        58
+      ],
+      "flags": {},
+      "order": 67,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            13532,
+            13536
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveFloat",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        0.3
+      ],
+      "title": "TRACKING SMOOTHING"
+    },
+    {
+      "id": 5049,
+      "type": "LoadMediaPipeFaceLandmarker",
+      "pos": [
+        -3983.757170908322,
+        4700
+      ],
+      "size": [
+        320,
+        58
+      ],
+      "flags": {},
+      "order": 68,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "FACE_DETECTION_MODEL",
+          "type": "FACE_DETECTION_MODEL",
+          "links": [
+            13528
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadMediaPipeFaceLandmarker",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "mediapipe_face_fp32.safetensors"
+      ],
+      "title": "Load Face Detector"
+    },
+    {
+      "id": 5050,
+      "type": "MediaPipeFaceLandmarker",
+      "pos": [
+        -3983.757170908322,
+        4790
+      ],
+      "size": [
+        320,
+        170
+      ],
+      "flags": {},
+      "order": 69,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "face_detection_model",
+          "type": "FACE_DETECTION_MODEL",
+          "link": 13528
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 13529
+        }
+      ],
+      "outputs": [
+        {
+          "name": "face_landmarks",
+          "type": "FACE_LANDMARKS",
+          "links": [
+            13530
+          ]
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MediaPipeFaceLandmarker",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "full",
+        1,
+        0.5,
+        "interpolate"
+      ],
+      "title": "Detect Face"
+    },
+    {
+      "id": 5051,
+      "type": "MediaPipeFaceMask",
+      "pos": [
+        -3633.757170908322,
+        4700
+      ],
+      "size": [
+        270,
+        190
+      ],
+      "flags": {},
+      "order": 70,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "face_landmarks",
+          "type": "FACE_LANDMARKS",
+          "link": 13530
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            13534,
+            13558
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MediaPipeFaceMask",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "custom",
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "title": "Face Mask"
+    },
+    {
+      "id": 5062,
+      "type": "ComfyMathExpression",
+      "pos": [
+        -3633.757170908322,
+        4920
+      ],
+      "size": [
+        240,
+        128
+      ],
+      "flags": {},
+      "order": 71,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "a",
+          "name": "values.a",
+          "type": "FLOAT,INT",
+          "link": 13531
+        },
+        {
+          "label": "b",
+          "name": "values.b",
+          "type": "FLOAT,INT",
+          "link": 13532
+        },
+        {
+          "label": "c",
+          "name": "values.c",
+          "type": "FLOAT,INT",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            13535
+          ]
+        },
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "BOOL",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfyMathExpression",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "a / b"
+      ],
+      "title": "crop_size_mult (zoom / smoothing)"
+    },
+    {
+      "id": 5052,
+      "type": "BatchCropFromMask",
+      "pos": [
+        -3333.757170908322,
+        4700
+      ],
+      "size": [
+        270,
+        120
+      ],
+      "flags": {},
+      "order": 72,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "original_images",
+          "type": "IMAGE",
+          "link": 13533
+        },
+        {
+          "name": "masks",
+          "type": "MASK",
+          "link": 13534
+        },
+        {
+          "name": "crop_size_mult",
+          "type": "FLOAT",
+          "widget": {
+            "name": "crop_size_mult"
+          },
+          "link": 13535
+        },
+        {
+          "name": "bbox_smooth_alpha",
+          "type": "FLOAT",
+          "widget": {
+            "name": "bbox_smooth_alpha"
+          },
+          "link": 13536
+        }
+      ],
+      "outputs": [
+        {
+          "name": "original_images",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "cropped_images",
+          "type": "IMAGE",
+          "links": [
+            13539
+          ]
+        },
+        {
+          "name": "bboxes",
+          "type": "BBOX",
+          "links": [
+            13560,
+            13572
+          ]
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BatchCropFromMask",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [
+        1.0,
+        0.3
+      ],
+      "title": "Crop Around Face"
+    },
+    {
+      "id": 5053,
+      "type": "ComfySwitchNode",
+      "pos": [
+        -3333.757170908322,
+        4860
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 73,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "switch",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "switch"
+          },
+          "link": 13537
+        },
+        {
+          "name": "on_false",
+          "type": "*",
+          "link": 13538
+        },
+        {
+          "name": "on_true",
+          "type": "*",
+          "link": 13539
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": [
+            13540,
+            13549,
+            13552,
+            13566
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfySwitchNode",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        false
+      ],
+      "title": "Switch D · Full frame or face crop"
+    },
+    {
+      "id": 5054,
+      "type": "PrimitiveInt",
+      "pos": [
+        -2993.757170908322,
+        4700
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 74,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            13543,
+            13546
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveInt",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        522240,
+        "fixed"
+      ],
+      "title": "S1 PIXELS (size preset)",
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 5055,
+      "type": "GetImageSizeAndCount",
+      "pos": [
+        -2993.757170908322,
+        4820
+      ],
+      "size": [
+        220,
+        86
+      ],
+      "flags": {},
+      "order": 75,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 13540
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "links": [
+            13541,
+            13544
+          ]
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": [
+            13542,
+            13545
+          ]
+        },
+        {
+          "name": "count",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GetImageSizeAndCount",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [],
+      "title": "Frame size"
+    },
+    {
+      "id": 5056,
+      "type": "ComfyMathExpression",
+      "pos": [
+        -2703.757170908322,
+        4700
+      ],
+      "size": [
+        240,
+        128
+      ],
+      "flags": {},
+      "order": 76,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "a",
+          "name": "values.a",
+          "type": "FLOAT,INT",
+          "link": 13541
+        },
+        {
+          "label": "b",
+          "name": "values.b",
+          "type": "FLOAT,INT",
+          "link": 13542
+        },
+        {
+          "label": "c",
+          "name": "values.c",
+          "type": "FLOAT,INT",
+          "link": 13543
+        },
+        {
+          "label": "d",
+          "name": "values.d",
+          "type": "FLOAT,INT",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": null
+        },
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            13547,
+            13550,
+            13555
+          ]
+        },
+        {
+          "name": "BOOL",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfyMathExpression",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "round(sqrt(c * a / b) / 32) * 32"
+      ],
+      "title": "s1 width"
+    },
+    {
+      "id": 5057,
+      "type": "ComfyMathExpression",
+      "pos": [
+        -2703.757170908322,
+        4860
+      ],
+      "size": [
+        240,
+        128
+      ],
+      "flags": {},
+      "order": 77,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "a",
+          "name": "values.a",
+          "type": "FLOAT,INT",
+          "link": 13544
+        },
+        {
+          "label": "b",
+          "name": "values.b",
+          "type": "FLOAT,INT",
+          "link": 13545
+        },
+        {
+          "label": "c",
+          "name": "values.c",
+          "type": "FLOAT,INT",
+          "link": 13546
+        },
+        {
+          "label": "d",
+          "name": "values.d",
+          "type": "FLOAT,INT",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": null
+        },
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            13548,
+            13551,
+            13556
+          ]
+        },
+        {
+          "name": "BOOL",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfyMathExpression",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "round(sqrt(c * b / a) / 32) * 32"
+      ],
+      "title": "s1 height"
+    },
+    {
+      "id": 5058,
+      "type": "ComfyMathExpression",
+      "pos": [
+        -2433.757170908322,
+        4700
+      ],
+      "size": [
+        240,
+        128
+      ],
+      "flags": {},
+      "order": 78,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "a",
+          "name": "values.a",
+          "type": "FLOAT,INT",
+          "link": 13547
+        },
+        {
+          "label": "b",
+          "name": "values.b",
+          "type": "FLOAT,INT",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": null
+        },
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            13553
+          ]
+        },
+        {
+          "name": "BOOL",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfyMathExpression",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "a * 2"
+      ],
+      "title": "s2 width"
+    },
+    {
+      "id": 5059,
+      "type": "ComfyMathExpression",
+      "pos": [
+        -2433.757170908322,
+        4860
+      ],
+      "size": [
+        240,
+        128
+      ],
+      "flags": {},
+      "order": 79,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "a",
+          "name": "values.a",
+          "type": "FLOAT,INT",
+          "link": 13548
+        },
+        {
+          "label": "b",
+          "name": "values.b",
+          "type": "FLOAT,INT",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": null
+        },
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            13554
+          ]
+        },
+        {
+          "name": "BOOL",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfyMathExpression",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        "a * 2"
+      ],
+      "title": "s2 height"
+    },
+    {
+      "id": 5063,
+      "type": "MarkdownNote",
+      "pos": [
+        -4950,
+        4660
+      ],
+      "size": [
+        600,
+        520
+      ],
+      "flags": {},
+      "order": 80,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MarkdownNote"
+      },
+      "widgets_values": [
+        "## STEP 2c · Crop to face (optional)\n\nTurn **CROP TO FACE** on for wide shots: the model's resolution then goes to the face instead of the whole frame, so lips come out sharper. The saved output is the face crop.\n\n**Previews** (green groups, temp files only, nothing extra saved):\n- *Face detection + crop box*: detected face mask in green, crop window in red, on the original clip.\n- *Face crop (model input)*: exactly what the model sees.\n- *Result pasted onto original* (next to STEP 7): the dubbed face crop blended back into the full frame.\nWith CROP TO FACE off they just show the clip / the normal result, and face detection doesn't run.\n\n- **FACE ZOOM**: crop size as a multiple of the face. **1.8** = head, hair, chin and top of the shoulders. Lower = tighter.\n- **TRACKING SMOOTHING**: how fast the crop follows the head. Lower = steadier (0.2 to 0.5).\n- Black edges in the result mean the crop hit the frame edge: lower FACE ZOOM a little.\n- **Huge clips run out of RAM** (system RAM, not VRAM): frames are held as 32-bit floats, ~105 MB each at 4804×1830. Export a copy at **4 MP or less** first (e.g. 3240×1234). `make lipsync-test` does this for you.\n- One face per shot. Frames where the face is missed are filled in from neighbouring frames.\n- Needs `models/detection/mediapipe_face_fp32.safetensors` (`make lipsync-setup` downloads it).\n\n## Auto size\n\n**S1 PIXELS** is the only size knob: s1 width × height for the first pass. The shape follows your clip (or the face crop) and s2 is always 2× s1.\n\n| S1 PIXELS | 16:9 s1 → s2 | GPU |\n|---|---|---|\n| 522240 | 960×544 → 1920×1088 | 32 GB+ |\n| 344064 | 768×448 → 1536×896 | 24 GB |\n| 225280 | 640×352 → 1280×704 | previews |\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 5064,
+      "type": "ImageAndMaskPreview",
+      "pos": [
+        -2123.757170908322,
+        4700
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 101,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "shape": 7,
+          "link": 13557
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "shape": 7,
+          "link": 13558
+        }
+      ],
+      "outputs": [
+        {
+          "name": "composite",
+          "type": "IMAGE",
+          "links": [
+            13559
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageAndMaskPreview",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [
+        0.35,
+        "0, 255, 0",
+        true
+      ],
+      "title": "Face mask overlay"
+    },
+    {
+      "id": 5065,
+      "type": "BboxVisualize",
+      "pos": [
+        -2123.757170908322,
+        4860
+      ],
+      "size": [
+        270,
+        100
+      ],
+      "flags": {},
+      "order": 102,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 13559
+        },
+        {
+          "name": "bboxes",
+          "type": "BBOX",
+          "link": 13560
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            13563
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BboxVisualize",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [
+        6,
+        "xywh"
+      ],
+      "title": "Draw crop box"
+    },
+    {
+      "id": 5066,
+      "type": "ComfySwitchNode",
+      "pos": [
+        -2123.757170908322,
+        4990
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 103,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "switch",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "switch"
+          },
+          "link": 13561
+        },
+        {
+          "name": "on_false",
+          "type": "*",
+          "link": 13562
+        },
+        {
+          "name": "on_true",
+          "type": "*",
+          "link": 13563
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": [
+            13564
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfySwitchNode",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        false
+      ],
+      "title": "Switch E · Detection preview"
+    },
+    {
+      "id": 5067,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        -1823.7571709083222,
+        4700
+      ],
+      "size": [
+        300,
+        420
+      ],
+      "flags": {},
+      "order": 104,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 13564
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "shape": 7,
+          "link": null
+        },
+        {
+          "name": "meta_batch",
+          "type": "VHS_BatchManager",
+          "shape": 7,
+          "link": null
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "shape": 7,
+          "link": null
+        },
+        {
+          "name": "frame_rate",
+          "type": "FLOAT",
+          "widget": {
+            "name": "frame_rate"
+          },
+          "link": 13565
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine",
+        "cnr_id": "comfyui-videohelpersuite"
+      },
+      "widgets_values": {
+        "frame_rate": 24,
+        "loop_count": 0,
+        "filename_prefix": "LipSync/preview_detection",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 19,
+        "save_metadata": true,
+        "trim_to_audio": false,
+        "pingpong": false,
+        "save_output": false,
+        "videopreview": {
+          "hidden": false,
+          "paused": false,
+          "params": {}
+        }
+      },
+      "title": "Preview · Face detection + crop box"
+    },
+    {
+      "id": 5068,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        -1503.7571709083222,
+        4700
+      ],
+      "size": [
+        300,
+        420
+      ],
+      "flags": {},
+      "order": 105,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 13566
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "shape": 7,
+          "link": null
+        },
+        {
+          "name": "meta_batch",
+          "type": "VHS_BatchManager",
+          "shape": 7,
+          "link": null
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "shape": 7,
+          "link": null
+        },
+        {
+          "name": "frame_rate",
+          "type": "FLOAT",
+          "widget": {
+            "name": "frame_rate"
+          },
+          "link": 13567
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine",
+        "cnr_id": "comfyui-videohelpersuite"
+      },
+      "widgets_values": {
+        "frame_rate": 24,
+        "loop_count": 0,
+        "filename_prefix": "LipSync/preview_crop",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 19,
+        "save_metadata": true,
+        "trim_to_audio": false,
+        "pingpong": false,
+        "save_output": false,
+        "videopreview": {
+          "hidden": false,
+          "paused": false,
+          "params": {}
+        }
+      },
+      "title": "Preview · Face crop (model input)"
+    },
+    {
+      "id": 5069,
+      "type": "ImageFromBatch",
+      "pos": [
+        919.0674359034267,
+        3940
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 106,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 13568
+        },
+        {
+          "name": "batch_index",
+          "type": "INT",
+          "widget": {
+            "name": "batch_index"
+          },
+          "link": null
+        },
+        {
+          "name": "length",
+          "type": "INT",
+          "widget": {
+            "name": "length"
+          },
+          "link": 13569
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            13570
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageFromBatch",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        0,
+        121
+      ],
+      "title": "Originals trimmed to output length"
+    },
+    {
+      "id": 5070,
+      "type": "BatchUncrop",
+      "pos": [
+        919.0674359034267,
+        4050
+      ],
+      "size": [
+        270,
+        222
+      ],
+      "flags": {},
+      "order": 107,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "original_images",
+          "type": "IMAGE",
+          "link": 13570
+        },
+        {
+          "name": "cropped_images",
+          "type": "IMAGE",
+          "link": 13571
+        },
+        {
+          "name": "bboxes",
+          "type": "BBOX",
+          "link": 13572
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            13575
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BatchUncrop",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [
+        0.25,
+        1.0,
+        true,
+        true,
+        true,
+        true
+      ],
+      "title": "Paste result onto original"
+    },
+    {
+      "id": 5071,
+      "type": "ComfySwitchNode",
+      "pos": [
+        919.0674359034267,
+        4300
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 108,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "switch",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "switch"
+          },
+          "link": 13573
+        },
+        {
+          "name": "on_false",
+          "type": "*",
+          "link": 13574
+        },
+        {
+          "name": "on_true",
+          "type": "*",
+          "link": 13575
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": [
+            13576
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfySwitchNode",
+        "cnr_id": "comfy-core"
+      },
+      "widgets_values": [
+        false
+      ],
+      "title": "Switch F · Composite preview"
+    },
+    {
+      "id": 5072,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        1219.0674359034267,
+        3940
+      ],
+      "size": [
+        520,
+        460
+      ],
+      "flags": {},
+      "order": 109,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 13576
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "shape": 7,
+          "link": 13577
+        },
+        {
+          "name": "meta_batch",
+          "type": "VHS_BatchManager",
+          "shape": 7,
+          "link": null
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "shape": 7,
+          "link": null
+        },
+        {
+          "name": "frame_rate",
+          "type": "FLOAT",
+          "widget": {
+            "name": "frame_rate"
+          },
+          "link": 13578
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine",
+        "cnr_id": "comfyui-videohelpersuite"
+      },
+      "widgets_values": {
+        "frame_rate": 24,
+        "loop_count": 0,
+        "filename_prefix": "LipSync/preview_composite",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 19,
+        "save_metadata": true,
+        "trim_to_audio": false,
+        "pingpong": false,
+        "save_output": false,
+        "videopreview": {
+          "hidden": false,
+          "paused": false,
+          "params": {}
+        }
+      },
+      "title": "Preview · Result pasted onto original"
     }
   ],
   "links": [
@@ -2434,14 +4210,6 @@
       1241,
       1,
       "CONDITIONING"
-    ],
-    [
-      12457,
-      3980,
-      0,
-      4528,
-      1,
-      "LATENT"
     ],
     [
       13089,
@@ -2466,14 +4234,6 @@
       4829,
       0,
       "NOISE"
-    ],
-    [
-      13108,
-      4848,
-      0,
-      4849,
-      1,
-      "AUDIO"
     ],
     [
       13112,
@@ -2676,14 +4436,6 @@
       "VIDEO"
     ],
     [
-      13442,
-      5010,
-      0,
-      5009,
-      0,
-      "IMAGE"
-    ],
-    [
       13445,
       5004,
       2,
@@ -2818,22 +4570,6 @@
       4969,
       0,
       "LATENT"
-    ],
-    [
-      13470,
-      5010,
-      1,
-      5005,
-      0,
-      "AUDIO"
-    ],
-    [
-      13472,
-      5010,
-      0,
-      5003,
-      0,
-      "IMAGE"
     ],
     [
       13475,
@@ -3026,6 +4762,542 @@
       3980,
       1,
       "INT"
+    ],
+    [
+      13512,
+      5025,
+      1,
+      5042,
+      0,
+      "INT"
+    ],
+    [
+      13513,
+      5010,
+      2,
+      5042,
+      1,
+      "FLOAT"
+    ],
+    [
+      13514,
+      5041,
+      0,
+      5043,
+      0,
+      "AUDIO"
+    ],
+    [
+      13515,
+      5042,
+      0,
+      5043,
+      1,
+      "FLOAT"
+    ],
+    [
+      13516,
+      5040,
+      0,
+      5044,
+      0,
+      "BOOLEAN"
+    ],
+    [
+      13517,
+      5010,
+      1,
+      5044,
+      1,
+      "AUDIO"
+    ],
+    [
+      13518,
+      5043,
+      0,
+      5044,
+      2,
+      "AUDIO"
+    ],
+    [
+      13519,
+      5044,
+      0,
+      5005,
+      0,
+      "AUDIO"
+    ],
+    [
+      13520,
+      5040,
+      0,
+      5045,
+      0,
+      "BOOLEAN"
+    ],
+    [
+      13521,
+      3980,
+      0,
+      5045,
+      1,
+      "LATENT"
+    ],
+    [
+      13522,
+      5006,
+      2,
+      5045,
+      2,
+      "LATENT"
+    ],
+    [
+      13523,
+      5045,
+      0,
+      4528,
+      1,
+      "LATENT"
+    ],
+    [
+      13524,
+      5040,
+      0,
+      5046,
+      0,
+      "BOOLEAN"
+    ],
+    [
+      13525,
+      4848,
+      0,
+      5046,
+      1,
+      "AUDIO"
+    ],
+    [
+      13526,
+      5044,
+      0,
+      5046,
+      2,
+      "AUDIO"
+    ],
+    [
+      13527,
+      5046,
+      0,
+      4849,
+      1,
+      "AUDIO"
+    ],
+    [
+      13528,
+      5049,
+      0,
+      5050,
+      0,
+      "FACE_DETECTION_MODEL"
+    ],
+    [
+      13529,
+      5010,
+      0,
+      5050,
+      1,
+      "IMAGE"
+    ],
+    [
+      13530,
+      5050,
+      0,
+      5051,
+      0,
+      "FACE_LANDMARKS"
+    ],
+    [
+      13531,
+      5060,
+      0,
+      5062,
+      0,
+      "FLOAT"
+    ],
+    [
+      13532,
+      5061,
+      0,
+      5062,
+      1,
+      "FLOAT"
+    ],
+    [
+      13533,
+      5010,
+      0,
+      5052,
+      0,
+      "IMAGE"
+    ],
+    [
+      13534,
+      5051,
+      0,
+      5052,
+      1,
+      "MASK"
+    ],
+    [
+      13535,
+      5062,
+      0,
+      5052,
+      2,
+      "FLOAT"
+    ],
+    [
+      13536,
+      5061,
+      0,
+      5052,
+      3,
+      "FLOAT"
+    ],
+    [
+      13537,
+      5048,
+      0,
+      5053,
+      0,
+      "BOOLEAN"
+    ],
+    [
+      13538,
+      5010,
+      0,
+      5053,
+      1,
+      "IMAGE"
+    ],
+    [
+      13539,
+      5052,
+      1,
+      5053,
+      2,
+      "IMAGE"
+    ],
+    [
+      13540,
+      5053,
+      0,
+      5055,
+      0,
+      "IMAGE"
+    ],
+    [
+      13541,
+      5055,
+      1,
+      5056,
+      0,
+      "INT"
+    ],
+    [
+      13542,
+      5055,
+      2,
+      5056,
+      1,
+      "INT"
+    ],
+    [
+      13543,
+      5054,
+      0,
+      5056,
+      2,
+      "INT"
+    ],
+    [
+      13544,
+      5055,
+      1,
+      5057,
+      0,
+      "INT"
+    ],
+    [
+      13545,
+      5055,
+      2,
+      5057,
+      1,
+      "INT"
+    ],
+    [
+      13546,
+      5054,
+      0,
+      5057,
+      2,
+      "INT"
+    ],
+    [
+      13547,
+      5056,
+      1,
+      5058,
+      0,
+      "INT"
+    ],
+    [
+      13548,
+      5057,
+      1,
+      5059,
+      0,
+      "INT"
+    ],
+    [
+      13549,
+      5053,
+      0,
+      5009,
+      0,
+      "IMAGE"
+    ],
+    [
+      13550,
+      5056,
+      1,
+      5009,
+      1,
+      "INT"
+    ],
+    [
+      13551,
+      5057,
+      1,
+      5009,
+      2,
+      "INT"
+    ],
+    [
+      13552,
+      5053,
+      0,
+      5003,
+      0,
+      "IMAGE"
+    ],
+    [
+      13553,
+      5058,
+      1,
+      5003,
+      1,
+      "INT"
+    ],
+    [
+      13554,
+      5059,
+      1,
+      5003,
+      2,
+      "INT"
+    ],
+    [
+      13555,
+      5056,
+      1,
+      3059,
+      1,
+      "INT"
+    ],
+    [
+      13556,
+      5057,
+      1,
+      3059,
+      2,
+      "INT"
+    ],
+    [
+      13557,
+      5010,
+      0,
+      5064,
+      0,
+      "IMAGE"
+    ],
+    [
+      13558,
+      5051,
+      0,
+      5064,
+      1,
+      "MASK"
+    ],
+    [
+      13559,
+      5064,
+      0,
+      5065,
+      0,
+      "IMAGE"
+    ],
+    [
+      13560,
+      5052,
+      2,
+      5065,
+      1,
+      "BBOX"
+    ],
+    [
+      13561,
+      5048,
+      0,
+      5066,
+      0,
+      "BOOLEAN"
+    ],
+    [
+      13562,
+      5010,
+      0,
+      5066,
+      1,
+      "IMAGE"
+    ],
+    [
+      13563,
+      5065,
+      0,
+      5066,
+      2,
+      "IMAGE"
+    ],
+    [
+      13564,
+      5066,
+      0,
+      5067,
+      0,
+      "IMAGE"
+    ],
+    [
+      13565,
+      5010,
+      2,
+      5067,
+      4,
+      "FLOAT"
+    ],
+    [
+      13566,
+      5053,
+      0,
+      5068,
+      0,
+      "IMAGE"
+    ],
+    [
+      13567,
+      5010,
+      2,
+      5068,
+      4,
+      "FLOAT"
+    ],
+    [
+      13568,
+      5010,
+      0,
+      5069,
+      0,
+      "IMAGE"
+    ],
+    [
+      13569,
+      5025,
+      1,
+      5069,
+      2,
+      "INT"
+    ],
+    [
+      13570,
+      5069,
+      0,
+      5070,
+      0,
+      "IMAGE"
+    ],
+    [
+      13571,
+      4995,
+      0,
+      5070,
+      1,
+      "IMAGE"
+    ],
+    [
+      13572,
+      5052,
+      2,
+      5070,
+      2,
+      "BBOX"
+    ],
+    [
+      13573,
+      5048,
+      0,
+      5071,
+      0,
+      "BOOLEAN"
+    ],
+    [
+      13574,
+      4995,
+      0,
+      5071,
+      1,
+      "IMAGE"
+    ],
+    [
+      13575,
+      5070,
+      0,
+      5071,
+      2,
+      "IMAGE"
+    ],
+    [
+      13576,
+      5071,
+      0,
+      5072,
+      0,
+      "IMAGE"
+    ],
+    [
+      13577,
+      5046,
+      0,
+      5072,
+      1,
+      "AUDIO"
+    ],
+    [
+      13578,
+      5010,
+      2,
+      5072,
+      4,
+      "FLOAT"
     ]
   ],
   "groups": [
@@ -3057,7 +5329,7 @@
         -2601.412447663453,
         3066.2825605503303,
         901.2675948537758,
-        767.8359367272315
+        933.7174394496697
       ],
       "color": "#3f789e",
       "flags": {},
@@ -3173,6 +5445,71 @@
         4973,
         5013
       ]
+    },
+    {
+      "id": 152,
+      "title": "STEP 2b · Recorded Audio (optional)",
+      "bounding": [
+        -4323.757170908322,
+        4290,
+        611.350434847699,
+        330
+      ],
+      "color": "#8A8",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 153,
+      "title": "STEP 2c · Crop To Face (optional)",
+      "bounding": [
+        -4323.757170908322,
+        4660,
+        1290,
+        420
+      ],
+      "color": "#8A8",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 154,
+      "title": "Auto size · s1/s2 from the frame shape",
+      "bounding": [
+        -3003.757170908322,
+        4660,
+        830,
+        420
+      ],
+      "color": "#88A",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 155,
+      "title": "Preview · Face detection & crop",
+      "bounding": [
+        -2133.757170908322,
+        4660,
+        950,
+        480
+      ],
+      "color": "#8A8",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 156,
+      "title": "Preview · Result pasted onto original",
+      "bounding": [
+        909.0674359034267,
+        3900,
+        871.8669780383623,
+        520
+      ],
+      "color": "#8A8",
+      "font_size": 24,
+      "flags": {}
     }
   ],
   "config": {},
